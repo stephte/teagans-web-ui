@@ -13,12 +13,13 @@ h2 {
 	text-align: center;
 	color: $lighter-green;
 }
+
 .form-wrapper {
 	@include form-box;
 }
 
 .form-wrapper button {
-	margin: auto;
+	@include form-button;
 }
 
 .forgot {

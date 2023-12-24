@@ -132,7 +132,7 @@ const CreateUser = () => {
 					/>
 					<Button 
 						onClick={() => createNewUser()}
-						text={loading ? "Loading..." : "Login"}
+						text={loading ? "Loading..." : "Create"}
 						disabled={!valid || loading}
 					/>
 				</div>

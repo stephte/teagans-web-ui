@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/auth";
 import { logoutUser } from "../data/user";
-import Logo from "../images/turtlelogo.png";
+import Logo from "../images/sea-turtle.svg";
 import Button from "./button";
 import "./navbar.scss";
 
@@ -33,7 +33,7 @@ const NavBar = () => {
 	};
 
 	return (
-		<div className="nav-bar">
+		<nav-bar>
 			<NavLink to="/" id="logobox">
 				<img src={Logo} alt="Logo" width="50" height="50" />
 			</NavLink>
@@ -60,7 +60,7 @@ const NavBar = () => {
 					disabled={!authState}
 				/>
 			</div>
-		</div>
+		</nav-bar>
 	);
 };
 

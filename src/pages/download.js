@@ -20,6 +20,7 @@ const DownloadVid = () => {
 
 	const [loading, setLoading] = useState(false);
 	const [valid, setValid] = useState(false);
+	const [errMsg, setErrMsg] = useState("");
 	const [url, setUrl] = useState("");
 	const [isAudio, setAudio] = useState(false);
 
@@ -33,14 +34,17 @@ const DownloadVid = () => {
 			return;
 		}
 		setLoading(true);
+		setErrMsg("");
 
 		downloadVideo(url, isAudio)
-			.then(() => setLoading(false))//.then((res) => res.blob()).then((blob) => {
 			.catch((err) => {
-				console.log("err!!");
-				console.log(err);
-				setLoading(false);
-			});
+				if (err?.response?.data?.error) {
+					setErrMsg(err.response.data.error);
+				} else {
+					setErrMsg("Invalid YouTube URL");
+					console.log(err);
+				}
+			}).finally(() => setLoading(false));
 	};
 
 	const onpress = (e) => {
@@ -50,32 +54,35 @@ const DownloadVid = () => {
 	};
 
 	return (
-		<download-page className="container">
-			<div className="form-wrapper">
-				<h2>Download Video:</h2>
-				<TextInput
-					placeholder="YouTube URL"
-					onChange={({ target }) => {
-						setUrl(target.value)
-					}}
-					value={url}
-					required
-					name="url"
-					onKeyPress={onpress}
-					diasbled={loading}
-				/>
-				<CheckboxInput
-					value={isAudio}
-					name="isAudio"
-					onChange={() => setAudio(!isAudio)}
-					text="Audio Only"
-					disabled={loading}
-				/>
-				<Button
-					onClick={() => download()}
-					text={loading ? "..." : "Download"}
-					disabled={!valid || loading}
-				/>
+		<download-page>
+			<p className="error">{errMsg || <span>&nbsp;</span>}</p>
+			<div className="container">
+				<div className="form-wrapper">
+					<h2>Download Video:</h2>
+					<TextInput
+						placeholder="YouTube URL"
+						onChange={({ target }) => {
+							setUrl(target.value)
+						}}
+						value={url}
+						required
+						name="url"
+						onKeyPress={onpress}
+						diasbled={loading}
+					/>
+					<CheckboxInput
+						value={isAudio}
+						name="isAudio"
+						onChange={() => setAudio(!isAudio)}
+						text="Audio Only"
+						disabled={loading}
+					/>
+					<Button
+						onClick={() => download()}
+						text={loading ? "..." : "Download"}
+						disabled={!valid || loading}
+					/>
+				</div>
 			</div>
 		</download-page>
 	);

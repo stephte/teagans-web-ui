@@ -2,9 +2,11 @@
 @import "../styles/mixins";
 
 download-page {
-	display: flex;
-	justify-content: center;
-	margin-top: 5em;
+	@include form-page;
+}
+
+.container {
+	@include form-container;
 }
 
 h2 {

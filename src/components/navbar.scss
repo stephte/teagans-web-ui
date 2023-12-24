@@ -1,6 +1,6 @@
 @import "../styles/variables";
 
-.nav-bar {
+nav-bar {
 	width: 100%;
 	display: inline-flex;
 	align-items: center;
@@ -13,12 +13,12 @@
 	width: 30px;
 }
 
-.nav-bar button {
+nav-bar button {
 	float: right;
 	margin-right: 10%;
 }
 
-.nav-bar ul {
+nav-bar ul {
 	margin: 0 20px 0 20px;
 }
 
@@ -26,7 +26,7 @@
 	width: 100%;
 }
 
-.nav-bar li {
+nav-bar li {
 	list-style: none;
 	display: inline;
 	padding: 1.5em;

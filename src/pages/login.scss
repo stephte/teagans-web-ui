@@ -18,5 +18,5 @@ h2 {
 }
 
 .form-wrapper button {
-	margin: auto;
+	@include form-button;
 }
