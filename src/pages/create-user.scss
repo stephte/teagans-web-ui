@@ -5,23 +5,6 @@ create-user {
 	@include form-page;
 }
 
-.container {
-	@include form-container;
-}
-
-h2 {
-	text-align: center;
-	color: $lighter-green;
-}
-
-.form-wrapper {
-	@include form-box;
-}
-
-.form-wrapper button {
-	@include form-button;
-}
-
 .forgot {
 	text-align: center;
 	font-size: 10px;

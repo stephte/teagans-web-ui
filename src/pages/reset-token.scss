@@ -4,24 +4,3 @@
 reset-token {
 	@include form-page;
 }
-
-.container {
-	@include form-container;
-}
-
-h2 {
-	text-align: center;
-	color: $lighter-green;
-}
-.form-wrapper {
-	@include form-box;
-}
-
-.form-wrapper p {
-	color: $lighter-green;
-	text-align: center;
-}
-
-.form-wrapper button {
-	@include form-button;
-}

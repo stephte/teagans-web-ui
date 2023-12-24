@@ -11,11 +11,6 @@
 	border-radius: 50px;
 }
 
-@mixin form-page {
-	display: block;
-	margin-top: 5em;
-}
-
 @mixin form-container {
 	display: flex;
 	justify-content: center;
@@ -24,4 +19,53 @@
 @mixin form-button {
 	margin: auto;
 	margin-top: 1em !important;
+}
+
+@mixin form-page {
+	display: block;
+	margin-top: 5em;
+
+	h2 {
+		text-align: center;
+		color: $lighter-green;
+	}
+
+	.container {
+		@include form-container;
+	}
+
+	.form-wrapper {
+		@include form-box;
+	}
+
+	.form-wrapper {
+		@include form-box;
+	}
+
+	.form-wrapper button {
+		@include form-button;
+	}
+
+	a {
+		text-decoration: none;
+	}
+
+	.error {
+		text-align: center;
+		font-size: 10px;
+		color: red;
+	}
+
+	.sublink {
+		text-align: center;
+		font-size: 10px;
+	}
+
+	.sublink a {
+		color: $darkest-green;
+	}
+
+	checkbox-input {
+		margin: auto;
+	}
 }

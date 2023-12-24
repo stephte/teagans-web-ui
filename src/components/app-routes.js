@@ -8,6 +8,7 @@ import CreateUser from "../pages/create-user";
 import ForgotPassword from "../pages/forgot-password";
 import NewPassword from "../pages/new-password";
 import ResetToken from "../pages/reset-token";
+import NotFound from "../pages/not-found";
 import NavBar from "./navbar";
 import DownloadVid from "../pages/download";
 
@@ -42,6 +43,7 @@ const AppRoutes = () => {
 				<Route path="/new-password" element={<NewPassword />} />
 				<Route path="/download" element={<DownloadVid />} />
 				<Route path="/" element={<Home />} />
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</>
 	);
