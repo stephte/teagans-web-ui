@@ -1,0 +1,41 @@
+@import "../styles/variables";
+
+.nav-bar {
+	width: 100%;
+	display: inline-flex;
+	align-items: center;
+	padding: 1em;
+	background: $darkest-green;
+	border-bottom: 2px solid $lighter-green;
+}
+
+#logobox {
+	width: 30px;
+}
+
+.nav-bar button {
+	float: right;
+	margin-right: 10%;
+}
+
+.nav-bar ul {
+	margin: 0 20px 0 20px;
+}
+
+.btnWrapper {
+	width: 100%;
+}
+
+.nav-bar li {
+	list-style: none;
+	display: inline;
+	padding: 1.5em;
+	color: $lighter-green;
+	text-decoration: none;
+	text-transform: uppercase;
+	border-left: 1px solid $lighter-green;
+}
+
+.borderright {
+	border-right: 1px solid $lighter-green;
+}

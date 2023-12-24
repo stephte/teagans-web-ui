@@ -1,0 +1,21 @@
+@import "../styles/variables";
+
+button{
+	text-align: center;
+	text-transform: uppercase;
+	padding: 10px;
+	border-radius: 50px;
+	width: 100px;
+	cursor: pointer;
+	border: 2px solid $lighter-green;
+	background: $darkest-green;
+	color: $lighter-green;
+	font-weight: bold;
+}
+
+button:disabled{
+	cursor: default;
+	background: #404040;
+	border-color: #b3b3b3;
+	color: #b3b3b3;
+}

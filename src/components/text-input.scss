@@ -1,0 +1,11 @@
+@import "../styles/variables";
+
+.text {
+	border-radius: 20px;
+	line-height: 2;
+	text-align: center;
+	font-size: 16px;
+	border: 2px solid $lighter-green;
+/*	#33cccc;*/
+	box-shadow: none;
+}

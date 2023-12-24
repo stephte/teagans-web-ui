@@ -1,0 +1,21 @@
+@import "../styles/variables";
+@import "../styles/mixins";
+
+download-page {
+	display: flex;
+	justify-content: center;
+	margin-top: 5em;
+}
+
+h2 {
+	text-align: center;
+	color: $lighter-green;
+}
+
+.form-wrapper {
+	@include form-box;
+}
+
+.form-wrapper checkbox-input {
+	margin: auto;
+}
