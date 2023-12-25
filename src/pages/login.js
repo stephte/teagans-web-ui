@@ -55,8 +55,6 @@ const Login = () => {
 		loginUser(data).then((res) => {
 			// get X-CSRF-Token header
 			const csrf = res.headers['x-csrf-token'];
-			console.log('state?.path')
-			console.log(state?.path)
 
 			dispatch({
 				type: "LOGIN",

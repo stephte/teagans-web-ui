@@ -9,7 +9,7 @@ const RequireAuth = ({ authLevel, children }) => {
 
 	if (isAuthed && user?.role >= (authLevel || 1)) {
 		return children;
-	} else {
+	} else if (isAuthed === false) {
 		return <Navigate to="/login" replace state={{ path: location.pathname }} />
 	}
 };

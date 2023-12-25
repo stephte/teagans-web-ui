@@ -13,7 +13,7 @@ import ResetToken from "../pages/reset-token";
 import NotFound from "../pages/not-found";
 import NavBar from "./navbar";
 import DownloadVid from "../pages/download";
-
+import Users from "../pages/users";
 
 const AppRoutes = () => {
 	const { authState, dispatch } = useContext(AuthContext);
@@ -26,9 +26,9 @@ const AppRoutes = () => {
 			getCurrentUser()
 				.then((res) => {
 					dispatch({
-			      type: "USER",
-			      payload: res.data
-			    });
+				      type: "USER",
+				      payload: res.data
+				    });
 		  	})
 		  	.catch(() => {});
 		}
@@ -47,6 +47,7 @@ const AppRoutes = () => {
 
 				{/*authed routes*/}
 				<Route path="/download" element={<RequireAuth> <DownloadVid /> </RequireAuth>} />
+				<Route path="/users" element={<RequireAuth authLevel={2}> <Users /> </RequireAuth>} />
 
 				{/*dont care routes*/}
 				<Route path="/" element={<Home />} />

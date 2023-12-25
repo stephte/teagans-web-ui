@@ -18,10 +18,16 @@ const NavBar = () => {
 		{
 			text: "Download",
 			link: "download",
-			css: "borderright",
+			authLevel: 1
+		},
+		{
+			text: "Users",
+			link: "users",
 			authLevel: 2
 		}
 	];
+
+	const filteredBtns = btns.filter(btn => !btn.authLevel || (btn.authLevel && authState?.user?.role >= btn.authLevel));
 
 	const logout = () => {
 		logoutUser().then((res) => {
@@ -39,11 +45,12 @@ const NavBar = () => {
 			</NavLink>
 			<ul>
 				{
-					btns.map((btn) => {
-						if (!btn.authLevel || (btn.authLevel && authState?.user?.role >= btn.authLevel)) {
-							return <NavBtn {...btn} key={btn.text} />;
+					filteredBtns.map((btn, ndx) => {
+						let css = "";
+						if (ndx === filteredBtns.length-1) {
+							css = "borderright";
 						}
-						return null;
+						return <NavBtn {...btn} css={css} key={btn.text} />;
 					})
 				}
 			</ul>

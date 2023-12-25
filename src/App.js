@@ -6,7 +6,7 @@ import "./App.scss";
 
 const initialAuthState = {
   isAuthed: null,
-  user: null
+  user: undefined
 };
 
 function App() {
