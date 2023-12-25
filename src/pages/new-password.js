@@ -2,21 +2,13 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import TextInput from "../components/text-input";
 import Button from "../components/button";
+import FormBox from "../components/form-box";
 import { resetPassword } from "../data/user";
 import { AuthContext } from "../contexts/auth";
-import "./new-password.scss";
 
 const NewPassword = () => {
 	const { authState, dispatch } = useContext(AuthContext);
 	const navigate = useNavigate();
-
-	// redirect back to home if already logged in
-	useEffect(() => {
-		// redirect back to home if already logged in
-		if (authState?.isAuthed) {
-			navigate("/");
-		}
-	}, [authState?.isAuthed]);
 
 	const [loading, setLoading] = useState(false);
 	const [password, setPassword] = useState("");
@@ -57,37 +49,32 @@ const NewPassword = () => {
 	};
 
 	return (
-		<new-password>
-			<p className="error">{errMsg || <span>&nbsp;</span>}</p>
-			<div className="container">
-				<div className="form-wrapper">
-					<h2>Enter New Password:</h2>
-					<TextInput
-						placeholder="New Password"
-						onChange={({ target }) => setPassword(target.value)}
-						value={password}
-						required
-						name="password"
-						onKeyPress={onpress}
-						isPassword
-					/>
-					<TextInput
-						placeholder="Confirm Password"
-						onChange={({ target }) => setPasswordConf(target.value)}
-						value={passwordConf}
-						required
-						name="passwordConf"
-						onKeyPress={onpress}
-						isPassword
-					/>
-					<Button 
-						onClick={() => updatePassword()}
-						text={loading ? "Loading..." : "Confirm"}
-						disabled={!password || password !== passwordConf || loading}
-					/>
-				</div>
-			</div>
-		</new-password>
+		<FormBox errMsg={errMsg}>
+			<h2>Enter New Password:</h2>
+			<TextInput
+				placeholder="New Password"
+				onChange={({ target }) => setPassword(target.value)}
+				value={password}
+				required
+				name="password"
+				onKeyPress={onpress}
+				isPassword
+			/>
+			<TextInput
+				placeholder="Confirm Password"
+				onChange={({ target }) => setPasswordConf(target.value)}
+				value={passwordConf}
+				required
+				name="passwordConf"
+				onKeyPress={onpress}
+				isPassword
+			/>
+			<Button 
+				onClick={() => updatePassword()}
+				text={loading ? "Loading..." : "Confirm"}
+				disabled={!password || password !== passwordConf || loading}
+			/>
+		</FormBox>
 	);
 };
 

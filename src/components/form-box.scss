@@ -1,0 +1,55 @@
+@import "../styles/variables";
+@import "../styles/mixins";
+
+form-box {
+	display: block;
+	margin-top: 3em;
+
+	h2 {
+		text-align: center;
+		color: $lighter-green;
+	}
+
+	.container {
+		display: flex;
+		justify-content: center;
+	}
+
+	.form-wrapper {
+		display: grid;
+		gap: 15px;
+		padding: 1em 3em 2em 3em;
+		width: 25%;
+		min-width: 300px;
+		background: $darkest-green;
+		border: 2px solid $lighter-green;
+		border-radius: 50px;
+
+		button {
+			@include form-button;
+		}
+	}
+
+	.error {
+		text-align: center;
+		font-size: 14px;
+		color: red;
+	}
+
+	p {
+		text-align: center;
+		color: $lighter-green;
+	}
+
+	.sublink {
+		font-size: 12px;
+
+		a {
+			color: $darkest-green;
+		}
+	}
+
+	checkbox-input {
+		margin: auto;
+	}
+}

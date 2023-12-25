@@ -2,22 +2,14 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import TextInput from "../components/text-input";
 import Button from "../components/button";
+import FormBox from "../components/form-box";
 import { sendPWReset } from "../data/user";
 import { AuthContext } from "../contexts/auth";
 import { TOKEN_EMAIL } from "../utilities/consts";
-import "./forgot-password.scss";
 
 const ForgotPassword = () => {
 	const { authState, dispatch } = useContext(AuthContext);
 	const navigate = useNavigate();
-
-	// redirect back to home if already logged in
-	useEffect(() => {
-		// redirect back to home if already logged in
-		if (authState?.isAuthed) {
-			navigate("/");
-		}
-	}, [authState?.isAuthed]);
 
 	const [loading, setLoading] = useState(false);
 	const [errMsg, setErrMsg] = useState("");
@@ -52,27 +44,22 @@ const ForgotPassword = () => {
 	};
 
 	return (
-		<forgot-password>
-			<p className="error">{errMsg || <span>&nbsp;</span>}</p>
-			<div className="container">
-				<div className="form-wrapper">
-					<h2>Enter Email:</h2>
-					<TextInput
-						placeholder="Email"
-						onChange={({ target }) => setEmail(target.value)}
-						value={email}
-						required
-						name="email"
-						onKeyPress={onpress}
-					/>
-					<Button 
-						onClick={() => pwReset()}
-						text={loading ? "Loading..." : "Submit"}
-						disabled={!email || loading}
-					/>
-				</div>
-			</div>
-		</forgot-password>
+		<FormBox errMsg={errMsg}>
+			<h2>Enter Email:</h2>
+			<TextInput
+				placeholder="Email"
+				onChange={({ target }) => setEmail(target.value)}
+				value={email}
+				required
+				name="email"
+				onKeyPress={onpress}
+			/>
+			<Button 
+				onClick={() => pwReset()}
+				text={loading ? "Loading..." : "Submit"}
+				disabled={!email || loading}
+			/>
+		</FormBox>
 	);
 };
 

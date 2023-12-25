@@ -2,6 +2,8 @@ import { useEffect, useContext } from "react";
 import { Routes, Route } from 'react-router-dom';
 import { AuthContext } from "../contexts/auth";
 import { getCurrentUser } from "../data/user";
+import RequireAuth from "./require-auth";
+import RequireNoAuth from "./require-no-auth";
 import Home from "../pages/home";
 import Login from "../pages/login";
 import CreateUser from "../pages/create-user";
@@ -36,12 +38,17 @@ const AppRoutes = () => {
 		<>
 			<NavBar />
 			<Routes>
-				<Route path="/login" element={<Login />} />
-				<Route path="/create-user" element={<CreateUser />} />
-				<Route path="/forgot-password" element={<ForgotPassword />} />
-				<Route path="/reset-token" element={<ResetToken />} />
-				<Route path="/new-password" element={<NewPassword />} />
-				<Route path="/download" element={<DownloadVid />} />
+				{/*no authed routes*/}
+				<Route path="/login" element={<RequireNoAuth> <Login /> </RequireNoAuth>} />
+				<Route path="/create-user" element={<RequireNoAuth> <CreateUser /> </RequireNoAuth>} />
+				<Route path="/forgot-password" element={<RequireNoAuth> <ForgotPassword /> </RequireNoAuth>} />
+				<Route path="/reset-token" element={<RequireNoAuth> <ResetToken /> </RequireNoAuth>} />
+				<Route path="/new-password" element={<RequireNoAuth> <NewPassword /> </RequireNoAuth>} />
+
+				{/*authed routes*/}
+				<Route path="/download" element={<RequireAuth> <DownloadVid /> </RequireAuth>} />
+
+				{/*dont care routes*/}
 				<Route path="/" element={<Home />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>

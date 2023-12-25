@@ -4,13 +4,13 @@ nav-bar {
 	width: 100%;
 	display: inline-flex;
 	align-items: center;
-	padding: 1em;
 	background: $darkest-green;
 	border-bottom: 2px solid $lighter-green;
 }
 
 #logobox {
 	width: 30px;
+	margin: 20px 0px 15px 30px;
 }
 
 nav-bar button {
