@@ -1,0 +1,36 @@
+@import "../styles/variables";
+
+users-page {
+	display: block;
+	margin: 0 25% 0 25%;
+	text-align: center;
+
+
+	.pagination-details {
+		display: inline-block;
+		font-size: 10px;
+		margin: auto;
+		color: $darker-green;
+
+		span {
+			margin-right: 10px;
+		}
+
+		.clickable:hover {
+			cursor: pointer;
+		}
+		.disabled {
+			color: $light-grey;
+		}
+	}
+
+	.panel {
+		padding: 15px 0 15px 0;
+		border-bottom: 2px solid $darkest-green;
+		text-align: center;
+
+		:hover {
+			cursor: pointer;
+		}
+	}
+}

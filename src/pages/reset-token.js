@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import TextInput from "../components/text-input";
+import AppInput from "../components/app-input";
 import Button from "../components/button";
 import FormBox from "../components/form-box";
 import { confirmToken } from "../data/user";
@@ -46,12 +46,12 @@ const ResetToken = () => {
 	};
 
 	return (
-		<FormBox errMsg={errMsg}>
+		<FormBox errMsg={errMsg} isLoading={loading}>
 			<p>
 				If a user with the email '{email}' exists,
 				then a password reset email is on the way
 			</p>
-			<TextInput
+			<AppInput
 				placeholder="Reset Token"
 				onChange={({ target }) => setToken(target.value)}
 				value={token}

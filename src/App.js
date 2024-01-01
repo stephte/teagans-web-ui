@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
-import AppRoutes from "./components/app-routes";
+import AppRoutes from "./app-routes";
 import { useReducer } from "react";
 import { AuthContext, authReducer } from "./contexts/auth";
 import "./App.scss";

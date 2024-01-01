@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import TextInput from "../components/text-input";
+import AppInput from "../components/app-input";
 import CheckboxInput from "../components/checkbox-input";
 import Button from "../components/button";
 import FormBox from "../components/form-box";
@@ -47,9 +47,9 @@ const DownloadVid = () => {
 	};
 
 	return (
-		<FormBox errMsg={errMsg}>
+		<FormBox errMsg={errMsg} isLoading={loading}>
 			<h2>Download Video:</h2>
-			<TextInput
+			<AppInput
 				placeholder="YouTube URL"
 				onChange={({ target }) => {
 					setUrl(target.value)

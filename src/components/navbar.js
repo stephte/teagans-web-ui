@@ -24,6 +24,16 @@ const NavBar = () => {
 			text: "Users",
 			link: "users",
 			authLevel: 2
+		},
+		{
+			text: "AddUser",
+			link: "add-user",
+			authLevel: 2
+		},
+		{
+			text: "Account",
+			link: "users/current",
+			authLevel: 1
 		}
 	];
 

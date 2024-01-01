@@ -9,3 +9,9 @@
 /*	#33cccc;*/
 	box-shadow: none;
 }
+
+.text:disabled {
+	background: $light-grey;
+	color: $dark-grey;
+	border: 2px solid $dark-grey;
+}

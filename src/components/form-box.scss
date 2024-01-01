@@ -2,6 +2,7 @@
 @import "../styles/mixins";
 
 form-box {
+	position: relative;
 	display: block;
 	margin-top: 3em;
 
@@ -28,6 +29,10 @@ form-box {
 		button {
 			@include form-button;
 		}
+	}
+
+	.loading {
+		background: $light-grey;
 	}
 
 	.error {

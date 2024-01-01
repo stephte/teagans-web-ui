@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import TextInput from "../components/text-input";
+import AppInput from "../components/app-input";
 import FormBox from "../components/form-box";
 import Button from "../components/button";
 import { loginUser } from "../data/user";
@@ -30,7 +30,7 @@ const Login = () => {
 			text: "Forgot Password?"
 		},
 		{
-			to: "/create-user",
+			to: "/create-account",
 			text: "New? Create an Account!"
 		}
 	];
@@ -80,9 +80,9 @@ const Login = () => {
 	};
 
 	return (
-		<FormBox errMsg={errMsg} subLinks={subLinks}>
+		<FormBox errMsg={errMsg} subLinks={subLinks} isLoading={loading}>
 			<h2>Login</h2>
-			<TextInput
+			<AppInput
 				placeholder="Email"
 				onChange={updateData}
 				value={loginData.email}
@@ -90,7 +90,7 @@ const Login = () => {
 				name="email"
 				onKeyPress={onpress}
 			/>
-			<TextInput
+			<AppInput
 				placeholder="Password"
 				onChange={updateData}
 				value={loginData.password}
@@ -98,6 +98,7 @@ const Login = () => {
 				required
 				name="password"
 				onKeyPress={onpress}
+				type="password"
 			/>
 			<Button 
 				onClick={() => login()}

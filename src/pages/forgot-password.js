@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import TextInput from "../components/text-input";
+import AppInput from "../components/app-input";
 import Button from "../components/button";
 import FormBox from "../components/form-box";
 import { sendPWReset } from "../data/user";
@@ -44,9 +44,9 @@ const ForgotPassword = () => {
 	};
 
 	return (
-		<FormBox errMsg={errMsg}>
+		<FormBox errMsg={errMsg} isLoading={loading}>
 			<h2>Enter Email:</h2>
-			<TextInput
+			<AppInput
 				placeholder="Email"
 				onChange={({ target }) => setEmail(target.value)}
 				value={email}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import TextInput from "../components/text-input";
+import AppInput from "../components/app-input";
 import Button from "../components/button";
 import FormBox from "../components/form-box";
 import { resetPassword } from "../data/user";
@@ -49,9 +49,9 @@ const NewPassword = () => {
 	};
 
 	return (
-		<FormBox errMsg={errMsg}>
+		<FormBox errMsg={errMsg} isLoading={loading}>
 			<h2>Enter New Password:</h2>
-			<TextInput
+			<AppInput
 				placeholder="New Password"
 				onChange={({ target }) => setPassword(target.value)}
 				value={password}
@@ -60,7 +60,7 @@ const NewPassword = () => {
 				onKeyPress={onpress}
 				isPassword
 			/>
-			<TextInput
+			<AppInput
 				placeholder="Confirm Password"
 				onChange={({ target }) => setPasswordConf(target.value)}
 				value={passwordConf}
