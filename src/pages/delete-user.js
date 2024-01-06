@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import AppInput from "../components/app-input";
 import FormBox from "../components/form-box";
 import Button from "../components/button";
 import { getUser, logoutUser, deleteUser } from "../data/user";

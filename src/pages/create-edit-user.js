@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate, Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AppInput from "../components/app-input";
 import Button from "../components/button";
 import FormBox from "../components/form-box";
@@ -29,10 +29,9 @@ const CreateEditUser = () => {
 	});
 
 	useEffect(() => {
-		let { firstName, lastName, email, password, passwordConf, role } = userData;
-		let currentRole = authState?.user?.role || 1;
+		let { firstName, lastName, email, password, passwordConf } = userData;
 		setValid(editEnabled && firstName && lastName && email && ((id) || (password && (password === passwordConf))));
-	}, [userData, editEnabled]);
+	}, [id, userData, editEnabled]);
 
 	useEffect(() => {
 		if (id) {
@@ -56,15 +55,14 @@ const CreateEditUser = () => {
 	}, [id]);
 
 	useEffect(() => {
-		const { role } = authState?.user;
-		setEditEnabled(!id || (id === "current" || id === authState?.user?.id) || (role > 2 || (role >= 2 && userRole <= 1)));
-		if (role) {
-			setRoleEnabled(role >= 3 || (role >= 2 && userRole <= 1));
+		const currentRole = authState?.user?.role || 1;
+		setEditEnabled(!id || (id === "current" || id === authState?.user?.id) || (currentRole > 2 || (currentRole >= 2 && userRole <= 1)));
+		if (currentRole) {
+			setRoleEnabled(currentRole >= 3 || (currentRole >= 2 && userRole <= 1));
 		}
 	}, [id, userRole, authState?.user])
 
 	useEffect(() => {
-		let sublinks = [];
 		if (id && editEnabled) {
 			setSublinks([
 				{
