@@ -1,7 +1,6 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getUsers } from "../data/user";
-import Button from "../components/button";
 import "./users.scss";
 
 const UserBox = ({ id, firstName, lastName, email, role }) => {
@@ -35,7 +34,7 @@ const Users = () => {
 			setQueryParams({ limit, page, sort });
 			setTotalPages(res.data.totalPages);
 		})
-	}, [queryParams]);
+	}, [queryParams, setQueryParams]);
 
 	const nextAv = () => {
 		return +queryParams.get("page") < totalPages;

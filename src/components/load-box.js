@@ -4,7 +4,7 @@ import Load1 from '../images/deer.gif';
 import Load2 from '../images/duck.gif';
 import Load3 from '../images/peedog.gif';
 import Load4 from '../images/rundog.gif';
-import Load5 from '../images/money.gif';
+// import Load5 from '../images/money.gif';
 // save money.gif for when payments happen :)
 
 const loadgifs = [

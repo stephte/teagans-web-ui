@@ -1,4 +1,3 @@
-import axios from "axios";
 import { api, authApi } from "./make-request";
 
 export const createUser = (data) => {

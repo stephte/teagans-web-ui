@@ -32,7 +32,7 @@ const CreateEditUser = () => {
 		let { firstName, lastName, email, password, passwordConf } = userData;
 		const currentRole = authState?.user?.role || 1;
 		setValid(editEnabled && firstName && lastName && email && currentRole >= userData.role && ((id) || (password && (password === passwordConf))));
-	}, [id, userData, editEnabled]);
+	}, [id, userData, editEnabled, authState?.user?.role]);
 
 	useEffect(() => {
 		if (id) {

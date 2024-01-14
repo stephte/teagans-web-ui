@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import AppInput from "../components/app-input";
 import FormBox from "../components/form-box";
 import Button from "../components/button";
@@ -7,7 +7,7 @@ import { loginUser } from "../data/user";
 import { AuthContext } from "../contexts/auth";
 
 const Login = () => {
-	const { authState, dispatch } = useContext(AuthContext);
+	const { dispatch } = useContext(AuthContext);
 	const navigate = useNavigate();
 	const { state } = useLocation();
 

@@ -26,6 +26,7 @@ const DeleteUser = () => {
 
 	const confirmDelete = () => {
 		if (id && authState?.user?.id && userData?.email) {
+			setLoading(true);
 			deleteUser(userData.id)
 				.then(() => {
 					if (id === "current" || authState.user.id === id) {
@@ -46,6 +47,7 @@ const DeleteUser = () => {
 						setErrMsg("Error with request");
 						console.log(err);
 					}
+					setLoading(false);
 				})
 		}
 	};

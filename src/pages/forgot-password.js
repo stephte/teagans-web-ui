@@ -1,14 +1,12 @@
-import { useState, useEffect, useContext } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppInput from "../components/app-input";
 import Button from "../components/button";
 import FormBox from "../components/form-box";
 import { sendPWReset } from "../data/user";
-import { AuthContext } from "../contexts/auth";
 import { TOKEN_EMAIL } from "../utilities/consts";
 
 const ForgotPassword = () => {
-	const { authState, dispatch } = useContext(AuthContext);
 	const navigate = useNavigate();
 
 	const [loading, setLoading] = useState(false);

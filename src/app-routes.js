@@ -37,7 +37,7 @@ const AppRoutes = () => {
 		  		});
 		  	});
 		}
-  }, [authState?.isAuthed, dispatch]);
+  }, [authState?.isAuthed, dispatch]); // eslint-disable-line
 
 	return (
 		<>

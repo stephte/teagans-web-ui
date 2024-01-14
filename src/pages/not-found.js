@@ -1,7 +1,5 @@
 import { useContext } from "react";
 import { AuthContext } from "../contexts/auth";
-import { logoutUser } from "../data/user";
-import Button from "../components/button";
 import "./not-found.scss"
 
 const NotFound = () => {

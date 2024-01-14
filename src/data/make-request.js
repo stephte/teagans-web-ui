@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { CSRF } from "../utilities/consts";
 
 export const authApi = axios.create({ withCredentials: true });

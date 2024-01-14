@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AppInput from "../components/app-input";
 import Button from "../components/button";
@@ -7,7 +7,7 @@ import { resetPassword } from "../data/user";
 import { AuthContext } from "../contexts/auth";
 
 const NewPassword = () => {
-	const { authState, dispatch } = useContext(AuthContext);
+	const { dispatch } = useContext(AuthContext);
 	const navigate = useNavigate();
 
 	const [loading, setLoading] = useState(false);
