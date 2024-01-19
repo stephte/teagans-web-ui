@@ -34,10 +34,21 @@ const NavBar = () => {
 			text: "Account",
 			link: "users/current",
 			authLevel: 1
+		},
+		{
+			text: "Create",
+			link: "create-account",
+			authLevel: -1
 		}
 	];
 
-	const filteredBtns = btns.filter(btn => !btn.authLevel || (btn.authLevel && authState?.user?.role >= btn.authLevel));
+	const filteredBtns = btns.filter(btn => {
+		return (
+			!btn.authLevel ||
+			(btn.authLevel < 0 && authState?.isAuthed === false) ||
+			(btn.authLevel && btn.authLevel > 0 && authState?.user?.role >= btn.authLevel)
+		);
+	});
 
 	const logout = () => {
 		logoutUser().then((res) => {
