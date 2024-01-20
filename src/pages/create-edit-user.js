@@ -146,11 +146,12 @@ const CreateEditUser = () => {
 							});
 							setLoading(false);
 							navigate("/");
-						}).catch(handleErrRes);
+						}).catch((err) => {
+							handleErrRes(err);
+						});
 				}
 			}).catch((err) => {
 				handleErrRes(err);
-				setLoading(false);
 			});
 	};
 
@@ -161,6 +162,7 @@ const CreateEditUser = () => {
 			setErrMsg("Error with request");
 			console.log(err);
 		}
+		setLoading(false);
 	};
 
 	const onpress = (e) => {
