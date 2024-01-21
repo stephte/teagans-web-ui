@@ -14,23 +14,4 @@ authApi.interceptors.request.use((config) => {
 	return Promise.reject(err);
 });
 
-// TODO: find out how to auto redirect to login for any authed request that gets 401
-// (except for the default 'users.current' call)
-
-// api.interceptors.response.use((res) => {
-// 	console.log("in interceptor response");
-// 	return res;
-// }, (err) => {
-// 	if (err.response?.data?.relogin) {
-// 		// update this to get where they were going and add to url params
-// 		console.log('err');
-// 		console.log(err);
-// 		console.log('this');
-// 		console.log(this);
-// 		// window.location.replace("/login");
-// 	}
-// 	return Promise.reject(err);
-// });
-
-// export authApi;
 export const api = axios.create({ withCredentials: true });

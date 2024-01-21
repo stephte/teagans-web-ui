@@ -1,13 +1,14 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import FormBox from "../components/form-box";
 import Button from "../components/button";
-import { getUser, logoutUser, deleteUser } from "../data/user";
-import { AuthContext } from "../contexts/auth";
+import { getUser, deleteUser } from "../data/user";
+import useAuthStore from "../stores/auth-store";
 
 const DeleteUser = () => {
-	const { authState, dispatch } = useContext(AuthContext);
-	const navigate = useNavigate()
+	const currentUser = useAuthStore(state => state.user);
+	const logoutUser = useAuthStore(state => state.logout);
+	const navigate = useNavigate();
 	const { id } = useParams();
 
 	const [userData, setUserData] = useState(null);
@@ -15,25 +16,24 @@ const DeleteUser = () => {
 	const [errMsg, setErrMsg] = useState("");
 
 	useEffect(() => {
-		if (id) {
+		if (id && currentUser && (id === 'current' || id === currentUser.id)) {
+			setUserData({ ...currentUser });
+		} else if (id) {
 			getUser(id).then((res) => {
 				setUserData({ ...res.data });
 			}).catch((err) => {
 				setErrMsg(err.response?.data?.error || "Error getting user data");
 			});
 		}
-	}, [id]);
+	}, [id, currentUser]);
 
 	const confirmDelete = () => {
-		if (id && authState?.user?.id && userData?.email) {
+		if (id && currentUser?.id && userData?.email) {
 			setLoading(true);
 			deleteUser(userData.id)
 				.then(() => {
-					if (id === "current" || authState.user.id === id) {
+					if (id === "current" || currentUser.id === id) {
 						logoutUser().finally(() => {
-							dispatch({
-								type: 'LOGOUT'
-							});
 							navigate("/");
 						});
 					} else {
@@ -59,7 +59,7 @@ const DeleteUser = () => {
 			<Button 
 				onClick={() => confirmDelete()}
 				text={loading ? "Loading..." : "Delete"}
-				disabled={!id || !authState?.user?.id || !userData?.email || loading}
+				disabled={!id || !currentUser?.id || !userData?.email || loading}
 			/>
 			<Button 
 				onClick={() => navigate(`/users/${id}`)}

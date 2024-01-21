@@ -1,13 +1,17 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AppInput from "../components/app-input";
 import Button from "../components/button";
 import FormBox from "../components/form-box";
-import { loginUser, createUser, getUser, updateUser } from "../data/user";
-import { AuthContext } from "../contexts/auth";
+import { createUser, getUser, updateUser } from "../data/user";
+import useAuthStore from "../stores/auth-store";
 
 const CreateEditUser = () => {
-	const { authState, dispatch } = useContext(AuthContext);
+	const currentUser = useAuthStore(state => state.user);
+	const isAuthed = useAuthStore(state => state.isAuthed);
+	const updateCurrentUser = useAuthStore(state => state.user);
+	const loginUser = useAuthStore((authState) => authState.login);
+
 	const { id } = useParams();
 	const navigate = useNavigate();
 
@@ -30,12 +34,15 @@ const CreateEditUser = () => {
 
 	useEffect(() => {
 		let { firstName, lastName, email, password, passwordConf } = userData;
-		const currentRole = authState?.user?.role || 1;
+		const currentRole = currentUser?.role || 1;
 		setValid(editEnabled && firstName && lastName && email && currentRole >= userData.role && ((id) || (password && (password === passwordConf))));
-	}, [id, userData, editEnabled, authState?.user?.role]);
+	}, [id, userData, editEnabled, currentUser?.role]);
 
 	useEffect(() => {
-		if (id) {
+		if (currentUser && (id === "current" || id === currentUser.id)) {
+			setUserData({ ...currentUser });
+			setUserRole(currentUser.role);
+		} else if (id) {
 			getUser(id).then((res) => {
 				setUserData({ ...res.data });
 				setUserRole(res.data.role);
@@ -53,15 +60,15 @@ const CreateEditUser = () => {
 			});
 			setUserRole(1);
 		}
-	}, [id]);
+	}, [id, currentUser]);
 
 	useEffect(() => {
-		const currentRole = authState?.user?.role || 1;
-		setEditEnabled(!id || (id === "current" || id === authState?.user?.id) || (currentRole > 2 || (currentRole >= 2 && userRole <= 1)));
+		const currentRole = currentUser?.role || 1;
+		setEditEnabled(!id || (id === "current" || id === currentUser?.id) || (currentRole > 2 || (currentRole >= 2 && userRole <= 1)));
 		if (currentRole) {
 			setRoleEnabled(currentRole >= 3 || (currentRole >= 2 && userRole <= 1));
 		}
-	}, [id, userRole, authState?.user])
+	}, [id, userRole, currentUser])
 
 	useEffect(() => {
 		if (id && editEnabled) {
@@ -71,7 +78,7 @@ const CreateEditUser = () => {
 					text: "Delete User"
 				}
 			]);
-		} else if (!id && !authState?.isAuthed) {
+		} else if (!id && !isAuthed) {
 			setSublinks([
 				{
 					to: "/login",
@@ -81,7 +88,7 @@ const CreateEditUser = () => {
 		} else {
 			setSublinks([]);
 		}
-	}, [id, editEnabled, authState?.isAuthed]);
+	}, [id, editEnabled, isAuthed]);
 
 
 	const updateData = ({ target }) => {
@@ -113,10 +120,7 @@ const CreateEditUser = () => {
 		updateUser(data)
 			.then((res) => {
 				if (id === "current") {
-					dispatch({
-						type: "USER",
-						payload: res.data
-					});
+					updateCurrentUser(res.data);
 				}
 				setUserData({ ...res.data });
 				setUserRole(res.data.role);
@@ -128,24 +132,14 @@ const CreateEditUser = () => {
 	const createNewUser = (data) => {
 		createUser(data)
 			.then((userRes) => {
-				if (authState.isAuthed) {
+				if (isAuthed) {
 					navigate("/users");
 					setLoading(false);
 				} else {
-					loginUser({ email: data.email, password: data.password})
-						.then((loginRes) => {
-							const csrf = loginRes.headers['x-csrf-token'];
-
-							dispatch({
-								type: "USER",
-								payload: userRes.data
-							})
-							dispatch({
-								type: "LOGIN",
-								payload: csrf
-							});
-							setLoading(false);
+					loginUser(data.email, data.password, userRes.data)
+						.then(() => {
 							navigate("/");
+							setLoading(false);
 						}).catch((err) => {
 							handleErrRes(err);
 						});
@@ -201,7 +195,7 @@ const CreateEditUser = () => {
 				onKeyPress={onpress}
 				disabled={!editEnabled}
 			/>
-			{(id || authState?.isAuthed) && (authState?.user?.role || 1) > 1 &&
+			{(id || isAuthed) && (currentUser?.role || 1) > 1 &&
 				(
 					<AppInput
 						placeholder="Role"
@@ -212,7 +206,7 @@ const CreateEditUser = () => {
 						onKeyPress={onpress}
 						type="number"
 						min={1}
-						max={authState?.user?.role || 1}
+						max={currentUser?.role || 1}
 						disabled={!roleEnabled}
 					/>
 				)
@@ -224,7 +218,6 @@ const CreateEditUser = () => {
 							placeholder="Password"
 							onChange={updateData}
 							value={userData.password}
-							isPassword
 							type="password"
 							required
 							name="password"
@@ -234,7 +227,6 @@ const CreateEditUser = () => {
 							placeholder="Confirm Password"
 							onChange={updateData}
 							value={userData.passwordConf}
-							isPassword
 							type="password"
 							required
 							name="passwordConf"

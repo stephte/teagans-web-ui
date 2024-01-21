@@ -9,7 +9,7 @@ import { TOKEN_EMAIL } from "../utilities/consts";
 const ResetToken = () => {
 	const navigate = useNavigate();
 
-	const email = localStorage.getItem(TOKEN_EMAIL);
+	const email = sessionStorage.getItem(TOKEN_EMAIL);
 
 	const [loading, setLoading] = useState(false);
 	const [errMsg, setErrMsg] = useState("");
@@ -25,7 +25,7 @@ const ResetToken = () => {
 
 		confirmToken(email, token).then((res) => {
 			console.log(res);
-			localStorage.removeItem(TOKEN_EMAIL);
+			sessionStorage.removeItem(TOKEN_EMAIL);
 			navigate("/new-password");
 		}).catch((err) => {
 			if (err?.response?.data?.error) {
@@ -47,7 +47,7 @@ const ResetToken = () => {
 		<FormBox errMsg={errMsg} isLoading={loading}>
 			<p>
 				If a user with the email '{email}' exists,
-				then a password reset email is on the way
+				then an email with the reset token is on its way.
 			</p>
 			<AppInput
 				placeholder="Reset Token"

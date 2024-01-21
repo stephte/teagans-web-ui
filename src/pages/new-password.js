@@ -1,13 +1,13 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppInput from "../components/app-input";
 import Button from "../components/button";
 import FormBox from "../components/form-box";
-import { resetPassword } from "../data/user";
-import { AuthContext } from "../contexts/auth";
+import useAuthStore from "../stores/auth-store";
 
 const NewPassword = () => {
-	const { dispatch } = useContext(AuthContext);
+	const resetPassword = useAuthStore(state => state.resetPassword);
+
 	const navigate = useNavigate();
 
 	const [loading, setLoading] = useState(false);
@@ -17,21 +17,13 @@ const NewPassword = () => {
 
 	const updatePassword = () => {
 		if (!password || password !== passwordConf) {
-			console.log("not valid!");
 			return;
 		}
 		setLoading(true);
 		setErrMsg("");
 
 		resetPassword(password).then((res) => {
-			const csrf = res.headers['x-csrf-token'];
-
-			dispatch({
-				type: "LOGIN",
-				payload: csrf
-			}).then(() => {
-				navigate("/");
-			});
+			navigate("/");
 		}).catch((err) => {
 			if (err?.response?.data?.error) {
 				setErrMsg(err.response.data.error);
@@ -58,7 +50,7 @@ const NewPassword = () => {
 				required
 				name="password"
 				onKeyPress={onpress}
-				isPassword
+				type="password"
 			/>
 			<AppInput
 				placeholder="Confirm Password"
@@ -67,7 +59,7 @@ const NewPassword = () => {
 				required
 				name="passwordConf"
 				onKeyPress={onpress}
-				isPassword
+				type="password"
 			/>
 			<Button 
 				onClick={() => updatePassword()}
