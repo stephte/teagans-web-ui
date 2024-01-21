@@ -45,7 +45,6 @@ const Login = () => {
 
 	const login = () => {
 		if (!valid) {
-			console.log("not valid!");
 			return;
 		}
 		setLoading(true);
@@ -54,7 +53,16 @@ const Login = () => {
 		const { email, password } = loginData;
 		loginUser(email, password)
 			.then(() => {
-				navigate(state?.path || "/");
+				// add small delay if navigating somewhere, to allow auth state to settle
+				if (state?.path) {
+					setTimeout(() => {
+						setLoading(false);
+						navigate(state.path);
+					}, 100);
+				} else {
+					setLoading(false);
+					navigate("/");
+				}
 			}).catch((err) => {
 				if (err?.response?.data?.error) {
 					setErrMsg(err.response.data.error);
@@ -62,7 +70,8 @@ const Login = () => {
 					setErrMsg("Error with request");
 					console.log(err);
 				}
-			}).finally(() => setLoading(false));
+				setLoading(false);
+			});
 	};
 
 	const onpress = (e) => {

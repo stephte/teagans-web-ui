@@ -15,14 +15,12 @@ const ForgotPassword = () => {
 
 	const pwReset = () => {
 		if (!email) {
-			console.log("not valid!");
 			return;
 		}
 		setLoading(true);
 		setErrMsg("");
 
 		sendPWReset(email).then((res) => {
-			console.log(res);
 			sessionStorage.setItem(TOKEN_EMAIL, email);
 			navigate("/reset-token");
 		}).catch((err) => {

@@ -2,13 +2,19 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { loginUser, getUser, logoutUser, resetPassword } from "../data/user";
 import { CSRF } from "../utilities/consts";
+import { getExpTimestamp } from "../utilities/functions";
+
+const defaultState = {
+	user: null,
+	isAuthed: false,
+	authExpiration: 0
+};
 
 // use localStorage for this
 const useAuthStore = create(
 	persist(
 		(set, get) => ({
-			user: null,
-			isAuthed: false,
+			...defaultState,
 			login: (email, password, user = null) => {
 				return loginUser(email, password).then((loginRes) => {
 					// store X-CSRF-Token header
@@ -24,7 +30,8 @@ const useAuthStore = create(
 							.then((userRes) => {
 								set({
 									user: userRes.data,
-									isAuthed: true
+									isAuthed: true,
+									authExpiration: getExpTimestamp(loginRes.headers['expires'])
 								});
 							});
 					}
@@ -33,27 +40,29 @@ const useAuthStore = create(
 			logout: () => {
 				return logoutUser()
 					.then(() => {
-						localStorage.removeItem(CSRF);
-						set({
-							user: null,
-							isAuthed: false
-						});
+						get().clear();
 					});
 			},
 			resetPassword: (password) => {
 				return resetPassword(password)
 					.then((res) => {
 						localStorage.setItem(CSRF, res.headers['x-csrf-token']);
+
 						getUser("current")
 							.then((userRes) => {
 								set({
 									user: userRes.data,
-									isAuthed: true
+									isAuthed: true,
+									authExpiration: getExpTimestamp(res.headers['expires'])
 								});
 							});
 					});
 			},
-			updateUser: (userData) => set({ user: userData })
+			updateUser: (userData) => set({ user: userData }),
+			clear: () => {
+				localStorage.removeItem(CSRF);
+				set({ ...defaultState });
+			}
 		}),
 		{
 			name: "auth-storage"

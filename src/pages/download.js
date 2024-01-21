@@ -18,7 +18,6 @@ const DownloadVid = () => {
 
 	const download = () => {
 		if (!valid) {
-			console.log("not valid!");
 			return;
 		}
 		setLoading(true);
