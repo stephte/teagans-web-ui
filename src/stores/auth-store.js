@@ -21,8 +21,6 @@ const useAuthStore = create(
 					// store X-CSRF-Token header
 					localStorage.setItem(CSRF, loginRes.headers['x-csrf-token']);
 
-					console.log(loginRes);
-
 					const authData = {
 						isAuthed: true,
 						authExpiration: getExpTimestamp(loginRes.headers['expires']),
@@ -43,7 +41,6 @@ const useAuthStore = create(
 								});
 							});
 					}
-					console.log("state set")
 				});
 			},
 			logout: () => {
