@@ -49,7 +49,6 @@ function App() {
                 <Route path="/users/:id" element={<RequireAuth> <CreateEditUser /> </RequireAuth>} />
                 <Route path="/add-user" element={<RequireAuth authLevel={2}> <CreateEditUser /> </RequireAuth>} />
                 <Route path="/delete-user/:id" element={<RequireAuth> <DeleteUser /> </RequireAuth>} />
-                {/*<Route path="/logout" element={<RequireAuth> <Logout /> </RequireAuth>} />*/}
 
                 {/*dont care routes*/}
                 <Route path="/" element={<Home />} />
