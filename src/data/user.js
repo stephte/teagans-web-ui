@@ -8,8 +8,8 @@ export const updateUser = (data) => {
 	return authApi.patch(`${process.env.REACT_APP_API_URL}/users/${data.id}`, data);
 };
 
-export const loginUser = (data) => {
-	return api.post(`${process.env.REACT_APP_API_URL}/auth/login`, data);
+export const loginUser = (email, password) => {
+	return api.post(`${process.env.REACT_APP_API_URL}/auth/login`, { email, password });
 };
 
 export const logoutUser = () => {

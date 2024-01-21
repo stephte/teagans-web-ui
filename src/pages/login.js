@@ -1,13 +1,13 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import AppInput from "../components/app-input";
 import FormBox from "../components/form-box";
 import Button from "../components/button";
-import { loginUser } from "../data/user";
-import { AuthContext } from "../contexts/auth";
+import useAuthStore from "../stores/auth-store";
 
 const Login = () => {
-	const { dispatch } = useContext(AuthContext);
+	const loginUser = useAuthStore(authState => authState.login);
+
 	const navigate = useNavigate();
 	const { state } = useLocation();
 
@@ -51,26 +51,18 @@ const Login = () => {
 		setLoading(true);
 		setErrMsg("");
 
-		let data = { ...loginData };
-		loginUser(data).then((res) => {
-			// get X-CSRF-Token header
-			const csrf = res.headers['x-csrf-token'];
-
-			dispatch({
-				type: "LOGIN",
-				payload: csrf
-			});
-			// wait to give the app time to get the current User data
-			// can change this when a global state manager is implemented
-			setTimeout(() => navigate(state?.path || "/"), 250);
-		}).catch((err) => {
-			if (err?.response?.data?.error) {
-				setErrMsg(err.response.data.error);
-			} else {
-				setErrMsg("Error with request");
-				console.log(err);
-			}
-		}).finally(() => setLoading(false));
+		const { email, password } = loginData;
+		loginUser(email, password)
+			.then(() => {
+				navigate(state?.path || "/");
+			}).catch((err) => {
+				if (err?.response?.data?.error) {
+					setErrMsg(err.response.data.error);
+				} else {
+					setErrMsg("Error with request");
+					console.log(err);
+				}
+			}).finally(() => setLoading(false));
 	};
 
 	const onpress = (e) => {
@@ -94,7 +86,6 @@ const Login = () => {
 				placeholder="Password"
 				onChange={updateData}
 				value={loginData.password}
-				isPassword
 				required
 				name="password"
 				onKeyPress={onpress}

@@ -1,10 +1,8 @@
-import { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { AuthContext } from "../contexts/auth";
+import useAuthStore from "../stores/auth-store";
 
-const RequireNoAuth = ({ authLevel, children }) => {
-	const { authState } = useContext(AuthContext);
-	const { isAuthed } = authState;
+const RequireNoAuth = ({ children }) => {
+	const isAuthed = useAuthStore(state => state.isAuthed);
 
 	if (isAuthed) {
 		return <Navigate to="/" replace />

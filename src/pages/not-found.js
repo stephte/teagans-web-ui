@@ -1,15 +1,15 @@
-import { useContext } from "react";
-import { AuthContext } from "../contexts/auth";
+import useAuthStore from "../stores/auth-store";
 import "./not-found.scss"
 
 const NotFound = () => {
-	const { authState } = useContext(AuthContext);
+	const currentUser = useAuthStore(state => state.user);
+	const isAuthed = useAuthStore(state => state.isAuthed);
 
 	return (
 		<not-found>
 			<h2>Page does not exist :(</h2>
-			{authState?.isAuthed &&
-				<h3>Really {authState.user?.firstName}? You're better than this.</h3>
+			{isAuthed &&
+				<h3>Really {currentUser?.firstName}? You're better than this.</h3>
 			}
 		</not-found>
 	);

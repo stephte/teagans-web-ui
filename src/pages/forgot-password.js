@@ -23,7 +23,7 @@ const ForgotPassword = () => {
 
 		sendPWReset(email).then((res) => {
 			console.log(res);
-			localStorage.setItem(TOKEN_EMAIL, email);
+			sessionStorage.setItem(TOKEN_EMAIL, email);
 			navigate("/reset-token");
 		}).catch((err) => {
 			if (err?.response?.data?.error) {
