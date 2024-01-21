@@ -54,15 +54,10 @@ const Login = () => {
 		loginUser(email, password)
 			.then(() => {
 				// add small delay if navigating somewhere, to allow auth state to settle
-				if (state?.path) {
-					setTimeout(() => {
-						setLoading(false);
-						navigate(state.path);
-					}, 100);
-				} else {
+				setTimeout(() => {
 					setLoading(false);
-					navigate("/");
-				}
+					navigate(state?.path || "/");
+				}, 100);
 			}).catch((err) => {
 				if (err?.response?.data?.error) {
 					setErrMsg(err.response.data.error);
