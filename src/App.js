@@ -1,5 +1,5 @@
-import { BrowserRouter } from 'react-router-dom';
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 import RequireAuth from "./components/require-auth";
 import RequireNoAuth from "./components/require-no-auth";
 import Home from "./pages/home";
@@ -13,9 +13,25 @@ import NotFound from "./pages/not-found";
 import NavBar from "./components/navbar";
 import DownloadVid from "./pages/download";
 import Users from "./pages/users";
+import useAuthStore from "./stores/auth-store";
+import { getUser } from "./data/user";
 import "./App.scss";
 
 function App() {
+    const isAuthed = useAuthStore(state => state.isAuthed);
+    const clearUser = useAuthStore(state => state.clear);
+
+    useEffect(() => {
+        if (isAuthed && clearUser) {
+            getUser("current")
+                .catch((err) => {
+                    if (err.response.status === 401) {
+                        clearUser();
+                    }
+                });
+        }
+    }, [isAuthed, clearUser]);
+
     return (
         <BrowserRouter>
             <NavBar />
@@ -33,6 +49,7 @@ function App() {
                 <Route path="/users/:id" element={<RequireAuth> <CreateEditUser /> </RequireAuth>} />
                 <Route path="/add-user" element={<RequireAuth authLevel={2}> <CreateEditUser /> </RequireAuth>} />
                 <Route path="/delete-user/:id" element={<RequireAuth> <DeleteUser /> </RequireAuth>} />
+                {/*<Route path="/logout" element={<RequireAuth> <Logout /> </RequireAuth>} />*/}
 
                 {/*dont care routes*/}
                 <Route path="/" element={<Home />} />

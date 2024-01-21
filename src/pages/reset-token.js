@@ -17,14 +17,12 @@ const ResetToken = () => {
 
 	const sendToken = () => {
 		if (!token) {
-			console.log("not valid!");
 			return;
 		}
 		setLoading(true);
 		setErrMsg("");
 
 		confirmToken(email, token).then((res) => {
-			console.log(res);
 			sessionStorage.removeItem(TOKEN_EMAIL);
 			navigate("/new-password");
 		}).catch((err) => {

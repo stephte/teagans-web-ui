@@ -102,7 +102,6 @@ const CreateEditUser = () => {
 
 	const submit = () => {
 		if (!valid) {
-			console.log("not valid!");
 			return;
 		}
 		setLoading(true);

@@ -1,41 +1,41 @@
-import { api, authApi } from "./make-request";
+import { api } from "./make-request";
 
 export const createUser = (data) => {
-	return api.post(`${process.env.REACT_APP_API_URL}/users/`, data);
+	return api.post("/users/", data);
 };
 
 export const updateUser = (data) => {
-	return authApi.patch(`${process.env.REACT_APP_API_URL}/users/${data.id}`, data);
+	return api.patch(`/users/${data.id}`, data);
 };
 
 export const loginUser = (email, password) => {
-	return api.post(`${process.env.REACT_APP_API_URL}/auth/login`, { email, password });
+	return api.post("/auth/login", { email, password });
 };
 
 export const logoutUser = () => {
-	return api.post(`${process.env.REACT_APP_API_URL}/auth/logout`);
+	return api.post("/auth/logout");
 };
 
 export const sendPWReset = (email) => {
-	return api.post(`${process.env.REACT_APP_API_URL}/auth/reset-password`, { email });
+	return api.post("/auth/reset-password", { email });
 };
 
 export const confirmToken = (email, token) => {
-	return api.post(`${process.env.REACT_APP_API_URL}/auth/confirm-reset-token`, { email, token });
+	return api.post("/auth/confirm-reset-token", { email, token });
 };
 
 export const resetPassword = (password) => {
-	return authApi.post(`${process.env.REACT_APP_API_URL}/auth/update-password`, { password });
+	return api.post("/auth/update-password", { password });
 };
 
 export const getUsers = (pageSize, pageNum) => {
-	return authApi.get(`${process.env.REACT_APP_API_URL}/users?limit=${pageSize}&page=${pageNum}`);
+	return api.get(`/users?limit=${pageSize}&page=${pageNum}`);
 };
 
 export const getUser = (id) => {
-	return authApi.get(`${process.env.REACT_APP_API_URL}/users/${id}`);
+	return api.get(`/users/${id}`);
 };
 
 export const deleteUser = (id) => {
-	return authApi.delete(`${process.env.REACT_APP_API_URL}/users/${id}`);
+	return api.delete(`/users/${id}`);
 };

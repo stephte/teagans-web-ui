@@ -5,7 +5,7 @@ const RequireNoAuth = ({ children }) => {
 	const isAuthed = useAuthStore(state => state.isAuthed);
 
 	if (isAuthed) {
-		return <Navigate to="/" replace />
+		return <Navigate to="/" replace />;
 	} else {
 		return children;
 	}
