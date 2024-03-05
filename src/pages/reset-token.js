@@ -35,7 +35,7 @@ const ResetToken = () => {
 		}).finally(() => setLoading(false));
 	};
 
-	const onpress = (e) => {
+	const onPress = (e) => {
 		if (e.key === 'Enter') {
 			sendToken();
 		}
@@ -53,7 +53,7 @@ const ResetToken = () => {
 				value={token}
 				required
 				name="token"
-				onKeyPress={onpress}
+				onKeyDown={onPress}
 			/>
 			<Button 
 				onClick={() => sendToken()}

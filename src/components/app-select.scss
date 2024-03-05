@@ -2,13 +2,14 @@
 @import "../styles/mixins";
 
 .input-label {
-	@include input-label;
+    @include input-label;
 }
 
-.app-input {
+.app-select {
 	@include input;
+    min-height: 2.5em;
 }
 
-.app-input:disabled {
+.app-select:disabled {
 	@include disabled-input;
 }
