@@ -34,7 +34,7 @@ const DownloadVid = () => {
 			}).finally(() => setLoading(false));
 	};
 
-	const onpress = (e) => {
+	const onPress = (e) => {
 		if (e.key === 'Enter') {
 			download();
 		}
@@ -44,14 +44,15 @@ const DownloadVid = () => {
 		<FormBox errMsg={errMsg} isLoading={loading}>
 			<h2>Download YouTube Video:</h2>
 			<AppInput
-				placeholder="YouTube URL"
+				label="YouTube URL"
+				placeholder="youtube.com/watch?..."
 				onChange={({ target }) => {
 					setUrl(target.value)
 				}}
 				value={url}
 				required
 				name="url"
-				onKeyPress={onpress}
+				onKeyDown={onPress}
 				diasbled={loading}
 			/>
 			<CheckboxInput

@@ -1,4 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
+import { UserRole } from "../utilities/enums.ts";
 import useAuthStore from "../stores/auth-store";
 
 const RequireAuth = ({ authLevel, children }) => {
@@ -11,9 +12,9 @@ const RequireAuth = ({ authLevel, children }) => {
 
 	const authValid = isAuthed && Date.now() <= authExpiration;
 
-	if (authValid && user?.role >= (authLevel || 1)) {
+	if (authValid && user?.role >= (authLevel || UserRole.Regular)) {
 		return children;
-	} else if (authValid && user?.role < (authLevel || 1)) {
+	} else if (authValid && user?.role < (authLevel || UserRole.Regular)) {
 		return <Navigate to="/" replace />
 	} else {
 		if (isAuthed) {

@@ -33,7 +33,7 @@ const ForgotPassword = () => {
 		}).finally(() => setLoading(false));
 	};
 
-	const onpress = (e) => {
+	const onPress = (e) => {
 		if (e.key === 'Enter') {
 			pwReset();
 		}
@@ -48,7 +48,7 @@ const ForgotPassword = () => {
 				value={email}
 				required
 				name="email"
-				onKeyPress={onpress}
+				onKeyDown={onPress}
 			/>
 			<Button 
 				onClick={() => pwReset()}

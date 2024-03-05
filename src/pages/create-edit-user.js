@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { UserRole } from "../utilities/enums.ts";
 import AppInput from "../components/app-input";
 import Button from "../components/button";
 import FormBox from "../components/form-box";
 import { createUser, getUser, updateUser } from "../data/user";
 import useAuthStore from "../stores/auth-store";
+import AppSelect from "../components/app-select.js";
 
 const CreateEditUser = () => {
 	const currentUser = useAuthStore(state => state.user);
@@ -19,7 +21,7 @@ const CreateEditUser = () => {
 	const [valid, setValid] = useState(false);
 	const [errMsg, setErrMsg] = useState("");
 	const [hasChanged, setHasChanged] = useState(false);
-	const [userRole, setUserRole] = useState(1); // used to keep track of original user role
+	const [userRole, setUserRole] = useState(UserRole.Regular); // used to keep track of original user role
 	const [editEnabled, setEditEnabled] = useState(false);
 	const [roleEnabled, setRoleEnabled] = useState(false);
 	const [subLinks, setSublinks] = useState([]);
@@ -29,12 +31,12 @@ const CreateEditUser = () => {
 		email: "",
 		password: "",
 		passwordConf: "",
-		role: 1
+		role: UserRole.Regular
 	});
 
 	useEffect(() => {
 		let { firstName, lastName, email, password, passwordConf } = userData;
-		const currentRole = currentUser?.role || 1;
+		const currentRole = currentUser?.role || UserRole.Regular;
 		setValid(editEnabled && firstName && lastName && email && currentRole >= userData.role && ((id) || (password && (password === passwordConf))));
 	}, [id, userData, editEnabled, currentUser?.role]);
 
@@ -56,17 +58,17 @@ const CreateEditUser = () => {
 				email: "",
 				password: "",
 				passwordConf: "",
-				role: 1
+				role: UserRole.Regular
 			});
-			setUserRole(1);
+			setUserRole(UserRole.Regular);
 		}
 	}, [id, currentUser]);
 
 	useEffect(() => {
-		const currentRole = currentUser?.role || 1;
-		setEditEnabled(!id || (id === "current" || id === currentUser?.id) || (currentRole > 2 || (currentRole >= 2 && userRole <= 1)));
+		const currentRole = currentUser?.role || UserRole.Regular;
+		setEditEnabled(!id || (id === "current" || id === currentUser?.id) || (currentRole > UserRole.Admin || (currentRole >= UserRole.Admin && userRole <= UserRole.Regular)));
 		if (currentRole) {
-			setRoleEnabled(currentRole >= 3 || (currentRole >= 2 && userRole <= 1));
+			setRoleEnabled(currentRole >= UserRole.SuperAdmin || (currentRole >= UserRole.Admin && userRole <= UserRole.Regular));
 		}
 	}, [id, userRole, currentUser])
 
@@ -92,10 +94,18 @@ const CreateEditUser = () => {
 
 
 	const updateData = ({ target }) => {
-		const value = target.type === "number" ? +target.value : target.value;
-		let obj = { ...userData };
+		const name = target.name;
+		let value = target.value;
 
-		obj[target.name] = value;
+		if (name === "role") {
+			value = UserRole[value];
+		} else if (target.type === "number") {
+			value = +value;
+		}
+
+		let obj = { ...userData };
+		obj[name] = value;
+
 		setUserData(obj);
 		setHasChanged(true);
 	};
@@ -158,7 +168,7 @@ const CreateEditUser = () => {
 		setLoading(false);
 	};
 
-	const onpress = (e) => {
+	const onPress = (e) => {
 		if (e.key === 'Enter') {
 			submit();
 		}
@@ -173,7 +183,7 @@ const CreateEditUser = () => {
 				value={userData.firstName}
 				required
 				name="firstName"
-				onKeyPress={onpress}
+				onKeyDown={onPress}
 				disabled={!editEnabled}
 			/>
 			<AppInput
@@ -182,7 +192,7 @@ const CreateEditUser = () => {
 				value={userData.lastName}
 				required
 				name="lastName"
-				onKeyPress={onpress}
+				onKeyDown={onPress}
 				disabled={!editEnabled}
 			/>
 			<AppInput
@@ -191,21 +201,17 @@ const CreateEditUser = () => {
 				value={userData.email}
 				required
 				name="email"
-				onKeyPress={onpress}
+				onKeyDown={onPress}
 				disabled={!editEnabled}
 			/>
-			{(id || isAuthed) && (currentUser?.role || 1) > 1 &&
+			{(id || isAuthed) && (currentUser?.role || UserRole.Regular) > UserRole.Regular &&
 				(
-					<AppInput
-						placeholder="Role"
+					<AppSelect
+						label="User Role"
 						onChange={updateData}
-						value={userData.role}
-						required
+						selectedValue={UserRole[userData.role]}
 						name="role"
-						onKeyPress={onpress}
-						type="number"
-						min={1}
-						max={currentUser?.role || 1}
+						enumObj={UserRole}
 						disabled={!roleEnabled}
 					/>
 				)
@@ -220,7 +226,7 @@ const CreateEditUser = () => {
 							type="password"
 							required
 							name="password"
-							onKeyPress={onpress}
+							onKeyDown={onPress}
 						/>
 						<AppInput
 							placeholder="Confirm Password"
@@ -229,7 +235,7 @@ const CreateEditUser = () => {
 							type="password"
 							required
 							name="passwordConf"
-							onKeyPress={onpress}
+							onKeyDown={onPress}
 						/>
 					</>
 				)

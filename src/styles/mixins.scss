@@ -4,3 +4,25 @@
 	margin: auto;
 	margin-top: 1em !important;
 }
+
+@mixin input {
+	border-radius: 20px;
+	min-height: 2em;
+	text-align: center;
+	font-size: $font-size-reg;
+	border: 2px solid $lighter-green;
+	box-shadow: none;
+	margin-bottom: 10px;
+}
+
+@mixin input-label {
+	color: $lighter-green;
+	text-align: center;
+	margin-bottom: -10px;
+}
+
+@mixin disabled-input {
+	background: $light-grey;
+	color: $dark-grey;
+	border: 2px solid $dark-grey;
+}

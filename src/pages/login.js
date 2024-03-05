@@ -73,7 +73,7 @@ const Login = () => {
 			});
 	};
 
-	const onpress = (e) => {
+	const onPress = (e) => {
 		if (e.key === 'Enter') {
 			login();
 		}
@@ -83,20 +83,22 @@ const Login = () => {
 		<FormBox errMsg={errMsg} subLinks={subLinks} isLoading={loading}>
 			<h2>Login</h2>
 			<AppInput
+				label="Email"
 				placeholder="Email"
 				onChange={updateData}
 				value={loginData.email}
 				required
 				name="email"
-				onKeyPress={onpress}
+				onKeyDown={onPress}
 			/>
 			<AppInput
+				label="Password"
 				placeholder="Password"
 				onChange={updateData}
 				value={loginData.password}
 				required
 				name="password"
-				onKeyPress={onpress}
+				onKeyDown={onPress}
 				type="password"
 			/>
 			<Button 

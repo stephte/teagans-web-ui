@@ -1,7 +1,8 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import { UserRole } from "../utilities/enums.ts";
 import Logo from "../images/sea-turtle.svg";
-import Button from "./button";
-import useAuthStore from "../stores/auth-store";
+import Button from "./button.js";
+import useAuthStore from "../stores/auth-store.js";
 import "./navbar.scss";
 
 const NavBar = () => {
@@ -11,30 +12,28 @@ const NavBar = () => {
 
 	const navigate = useNavigate();
 
-	// authLevels:
-	// 1 = regular
-	// 2 = admin
-	// 3 = super admin
+	// authLevel of -1 means button shows only if user is not logged in
+	// authLevel omitted or of falsy value will display button for everyone
 	const btns = [
 		{
 			text: "Download",
 			link: "download",
-			authLevel: 1
+			authLevel: UserRole.Regular
 		},
 		{
 			text: "Users",
 			link: "users",
-			authLevel: 2
+			authLevel: UserRole.Admin
 		},
 		{
 			text: "AddUser",
 			link: "add-user",
-			authLevel: 2
+			authLevel: UserRole.Admin
 		},
 		{
 			text: "Account",
 			link: "users/current",
-			authLevel: 1
+			authLevel: UserRole.Regular
 		},
 		{
 			text: "Create",
@@ -46,8 +45,8 @@ const NavBar = () => {
 	const filteredBtns = btns.filter(btn => {
 		return (
 			!btn.authLevel ||
-			(btn.authLevel < 0 && isAuthed === false) ||
-			(btn.authLevel && btn.authLevel > 0 && user?.role >= btn.authLevel)
+			(btn.authLevel < UserRole.Regular && isAuthed === false) ||
+			(btn.authLevel && btn.authLevel >= UserRole.Regular && user?.role >= btn.authLevel)
 		);
 	});
 

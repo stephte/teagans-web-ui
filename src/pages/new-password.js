@@ -34,7 +34,7 @@ const NewPassword = () => {
 		}).finally(() => setLoading(false));
 	};
 
-	const onpress = (e) => {
+	const onPress = (e) => {
 		if (e.key === 'Enter') {
 			updatePassword();
 		}
@@ -49,7 +49,7 @@ const NewPassword = () => {
 				value={password}
 				required
 				name="password"
-				onKeyPress={onpress}
+				onKeyDown={onPress}
 				type="password"
 			/>
 			<AppInput
@@ -58,7 +58,7 @@ const NewPassword = () => {
 				value={passwordConf}
 				required
 				name="passwordConf"
-				onKeyPress={onpress}
+				onKeyDown={onPress}
 				type="password"
 			/>
 			<Button 
