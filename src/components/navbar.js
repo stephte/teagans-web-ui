@@ -1,10 +1,17 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { UserRole } from "../utilities/enums.ts";
 import Logo from "../images/sea-turtle.svg";
-import Button from "./button.js";
+import Button from "./button";
 import useAuthStore from "../stores/auth-store.js";
 import "./navbar.scss";
 
+// interface Btn {
+// 	text: string;
+// 	link: string;
+// 	authLevel: UserRole | null;
+// }
+
+// TODO: make any overflowing buttons collapse into hamburger menu
 const NavBar = () => {
 	const isAuthed = useAuthStore(state => state.isAuthed);
 	const user = useAuthStore(state => state.user);
@@ -39,7 +46,12 @@ const NavBar = () => {
 			text: "Create",
 			link: "create-account",
 			authLevel: -1
-		}
+		},
+		{
+			text: "Tasks",
+			link: "tasks",
+			authLevel: UserRole.Regular
+		},
 	];
 
 	const filteredBtns = btns.filter(btn => {
