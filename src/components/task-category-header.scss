@@ -1,0 +1,34 @@
+@import "../styles/variables";
+
+.cat-wrapper {
+    // position: relative;
+    margin: 25px 0 25px 0;
+    display: flex;
+    justify-content: center;
+    // min-height: 70px;
+    
+
+    .cat-select {
+        display: grid;
+        width: 20%;
+        gap: 15px;
+        text-align: center;
+
+        label {
+            color: $darkest-green;
+        }
+
+        .app-select {
+            margin-bottom: 0;
+        }
+
+        .add-category-btn {
+            color: $darker-green;
+            font-size: 14px;
+        }
+
+        .add-category-btn:hover {
+            cursor: pointer;
+        }
+    }
+}
