@@ -12,7 +12,7 @@ const AppSelect = ({ selectList, enumObj, defaultValue, selectedValue, onChange,
 	if (selectList && selectList.length) {
 		return (
 			<>
-				<label className="input-label">{`${label}${required ? '*' : ''}`}</label>
+				<label className="select-label">{`${label}${required ? '*' : ''}`}</label>
 				<select
 					name={name}
 					className="app-select"

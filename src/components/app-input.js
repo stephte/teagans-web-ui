@@ -3,9 +3,9 @@ import "./app-input.scss";
 const AppInput = (props) => {
 	return (
 		<>
-			{props.label || props.placeholder &&
+			{props.label &&
 				<label className="input-label">
-					{`${props.label || props.placeholder}${props.required ? '*' : ''}`}
+					{`${props.label}${props.required ? '*' : ''}`}
 				</label>
 			}
 			<input

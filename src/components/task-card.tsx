@@ -12,14 +12,29 @@ import { Task } from "../utilities/types";
 // }
 const MAXCHARS = 105;
 
-const TaskCard = (task: Task) => {
-    let details = task.details;
+interface TaskCardProps {
+    task: Task,
+    dragging?: boolean;
+    handleDragStart?: (event: any) => any;
+    handleDragEnd?: (event: any) => any;
+}
+
+const TaskCard = ({ task, dragging, handleDragStart, handleDragEnd }: TaskCardProps) => {
+    let doc = new DOMParser().parseFromString(task.details, 'text/html');
+    let details = doc.body.textContent || "";
     if (details.length > MAXCHARS) {
         details = details.slice(0, MAXCHARS - 3) + "...";
     }
 
     return (
-        <div className="task-card-wrapper clickable" onClick={() => console.log("i wuz clikd")}>
+        <div
+            id={task.id}
+            className="task-card-wrapper clickable"
+            onClick={() => console.log("i wuz clikd")}
+            draggable={dragging !== undefined && !dragging}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+        >
             <div className="task-card">
                 <div className="name">{task.title}</div>
                 <div className="details">{details}</div>

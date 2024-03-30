@@ -6,11 +6,12 @@ import Modal from "../components/modal";
 import AppInput from "../components/app-input";
 import AppSelect from "../components/app-select";
 import { Task, TaskCategory, validTask } from "../utilities/types";
-import { getTasks, getTaskCategories, createTask } from "../data/task";
+import { getTasks, getTaskCategories, createTask, updateTask } from "../data/task";
 import { TaskPriority, TaskStatus } from "../utilities/enums";
 import "./tasks.scss";
 import Button from "../components/button";
 import AppTextArea from "../components/app-text-area";
+import AppTextEditor from "../components/app-text-editor";
 
 const defaultTask = {
     taskCategoryId: "",
@@ -18,29 +19,75 @@ const defaultTask = {
     details: "",
     status: TaskStatus.Todo,
     priority: TaskPriority.Low,
+    position: 0,
     effort: 0,
     cleared: false
-}
+};
 
 // TODO: add task view/create/edit page
-// TODO: add drag n drop to change task status
+// TODO: add task column sorting...?
+// TODO: display WSYWIG properly on task view page
 const Tasks = () => {
     const currentUser = useAuthStore(state => state.user);
 
     const [taskCategories, setTaskCategories] = useState<TaskCategory[]>();
     const [category, setCategory] = useState<TaskCategory>();
     const [tasks, setTasks] = useState<Task[]>();
+    const [taskPageErr, setTaskPageErr] = useState<string>("");
 
+    // modal stuff
     const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const [createdTask, setCreatedTask] = useState<Task>(defaultTask);
+    const [createdTask, setCreatedTask] = useState<Task>({...defaultTask});
     const [createLoading, setCreateLoading] = useState<boolean>(false);
-    const [createErr, setCreateErr] = useState<string>("")//"error creating the new task i am so sorry please forgive all of the sins i have brought forth upon you tonight");
+    const [createErr, setCreateErr] = useState<string>("");
+
+    // drag'n'drop stuff
+    const [dragging, setDragging] = useState<boolean>(false);
+    const handleDragStart = (event: any) => {
+        setDragging(true);
+        event.dataTransfer.setData("taskId", event.target.id);
+    };
+    const handleDragEnd = () => {
+        setDragging(false);
+    };
+    const handleDrop = (event: any) => {
+        event.preventDefault();
+
+        const taskId = event.dataTransfer.getData("taskId");
+        const statusNode = getStatusNode(event.target, 0);
+        const newStatusStr = statusNode.id;
+        if (isNaN(+TaskStatus[newStatusStr])) {
+            return;
+        }
+        setTaskPageErr("");
+
+        let task = tasks.find((t) => t.id === taskId);
+        const oldStatus = task.status;
+        task.status = +TaskStatus[newStatusStr];
+        updateTask(task)
+            .catch((err) => {
+                setTaskPageErr(`Error updating task: ${err.response?.data?.error || err.message || ""}`);
+                task.status = oldStatus;
+            });
+    };
+    // can update this to handle style changes to make updates more clear
+    const handleDragOver = (event: any) => {
+        event.preventDefault();
+    };
+    // i is used to ensure infinite loop doesnt happen for whatever reason
+    const getStatusNode = (node: any, i: number) => {
+        if (i >= 5 || (node.id && +TaskStatus[node.id])) {
+            return node;
+        }
+
+        return getStatusNode(node.parentNode, i+1);
+    };
+    // end drag'n'drop stuff
 
     const getCategories = async () => {
         const rv = await getTaskCategories(currentUser.id)
             .catch((err) => {
-                console.log("ERROR getting task categories");
-                console.log(err);
+                setTaskPageErr(err.response?.data?.error || err.message || "Error fetching categories");
                 return null;
             });
 
@@ -63,10 +110,10 @@ const Tasks = () => {
         getTasks(category.id, "all", false)
                 .then((res) => {
                     setTasks(res.data.tasks);
+                    setCreatedTask({ ...defaultTask, position: res.data.tasks.length });
                 })
                 .catch((err) => {
-                    console.log("ERROR getting tasks");
-                    console.log(err);
+                    setTaskPageErr(err.response?.data?.error || err.message || "Error fetching tasks");
                 });
     };
 
@@ -74,9 +121,6 @@ const Tasks = () => {
         if (category) {
             fetchTasks();
         }
-        // else if (!tasks) {
-        //     setTasks(tsks);
-        // }
     }, [category]);
 
     const editCreatedTask = ({ target }) => {
@@ -110,7 +154,6 @@ const Tasks = () => {
         createTask(newTask)
             .then((res) => {
                 fetchTasks();
-                setCreatedTask(defaultTask);
                 setModalOpen(false);
             })
             .catch((err) => {
@@ -132,24 +175,27 @@ const Tasks = () => {
                 onClose={() => setModalOpen(false)}
                 onAction={() => createNewTask()}
                 actionDisabled={!validTask(createdTask)}
+                actionBtnText="Add"
                 isLoading={createLoading}
                 errorMessage={createErr}
+                wide
             >
                 <h3>Create New Task</h3>
                 <AppInput
+                    label="Title"
                     placeholder="Title"
                     onChange={editCreatedTask}
                     value={createdTask.title}
                     required
                     name="title"
                 />
-                <AppTextArea
+                <AppTextEditor
                     value={createdTask.details}
-                    name="details"
-                    onChange={editCreatedTask}
+                    // name="details"
+                    onChange={(v) => setCreatedTask({ ...createdTask, details: v })}
                     label="Details"
                     required
-                    rows={10}
+                    // rows={10}
                 />
                 <AppSelect
                     label="Status"
@@ -168,6 +214,7 @@ const Tasks = () => {
                     required
                 />
                 <AppInput
+                    label="Effort"
                     placeholder="Effort"
                     onChange={editCreatedTask}
                     value={createdTask.effort}
@@ -182,36 +229,37 @@ const Tasks = () => {
                     onClick={() => setModalOpen(true)}
                 />
             </div>
-            <div className="tasks-page">
-                <div className="border-right">
+            {taskPageErr && <p className="error">{taskPageErr}</p>}
+            <div id="" className="tasks-page" onDrop={handleDrop} onDragOver={handleDragOver}>
+                <div className="border-right" id={TaskStatus[TaskStatus.Waiting]}>
                     <h3>WAITING</h3>
                     {
                         tasks?.filter(t => t.status === TaskStatus.Waiting).map(t => {
-                            return <TaskCard key={t.id} {...t} />;
+                            return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>
-                <div className="border-right">
+                <div className="border-right" id={TaskStatus[TaskStatus.Todo]}>
                     <h3>TODO</h3>
                     {
                         tasks?.filter(t => t.status === TaskStatus.Todo).map(t => {
-                            return <TaskCard key={t.id} {...t} />;
+                            return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>
-                <div className="border-right">
+                <div className="border-right" id={TaskStatus[TaskStatus.Started]}>
                     <h3>STARTED</h3>
                     {
                         tasks?.filter(t => t.status === TaskStatus.Started).map(t => {
-                            return <TaskCard key={t.id} {...t} />;
+                            return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>
-                <div>
+                <div id={TaskStatus[TaskStatus.Complete]}>
                     <h3>COMPLETE</h3>
                     {
                         tasks?.filter(t => t.status === TaskStatus.Complete).map(t => {
-                            return <TaskCard key={t.id} {...t} />;
+                            return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>
@@ -221,87 +269,3 @@ const Tasks = () => {
 };
 
 export default Tasks;
-
-// const tsks = [
-//     {
-//         id: "12353",
-//         title: "Laundry",
-//         details: "do the laundry or so help me god I will come and find you and you will wish that you had never ever ever ignored me",
-//         status: TaskStatus.Todo,
-//         priority: 2,//TaskPriority;
-//         effort: 3,//string;
-//         cleared: false,//boolean;
-//     },
-//     {
-//         id: "12354",
-//         title: "Dishes",
-//         details: "do the dishes or so help me god I will come and find you and you will wish that you had never ever ever ignored me",
-//         status: TaskStatus.Started,
-//         priority: 1,//TaskPriority;
-//         effort: 2,//string;
-//         cleared: false,//boolean;
-//     },
-//     {
-//         id: "12355",
-//         title: "Make dinner",
-//         details: "make dinner please :)",
-//         status: TaskStatus.Todo,
-//         priority: 2,//TaskPriority;
-//         effort: 3,//string;
-//         cleared: false,//boolean;
-//     },
-//     {
-//         id: "12356",
-//         title: "Laundry",
-//         details: "do the laundry or so help me god I will come and find you and you will wish that you had never ever ever ignored me",
-//         status: TaskStatus.Todo,
-//         priority: 2,//TaskPriority;
-//         effort: 3,//string;
-//         cleared: false,//boolean;
-//     },
-//     {
-//         id: "12357",
-//         title: "Laundry",
-//         details: "do the laundry or so help me god I will come and find you and you will wish that you had never ever ever ignored me",
-//         status: TaskStatus.Todo,
-//         priority: 2,//TaskPriority;
-//         effort: 3,//string;
-//         cleared: false,//boolean;
-//     },
-//     {
-//         id: "12358",
-//         title: "Laundry",
-//         details: "do the laundry or so help me god I will come and find you and you will wish that you had never ever ever ignored me",
-//         status: TaskStatus.Todo,
-//         priority: 2,//TaskPriority;
-//         effort: 3,//string;
-//         cleared: false,//boolean;
-//     },
-//     {
-//         id: "12359",
-//         title: "Laundry",
-//         details: "do the laundry or so help me god I will come and find you and you will wish that you had never ever ever ignored me",
-//         status: TaskStatus.Todo,
-//         priority: 2,//TaskPriority;
-//         effort: 3,//string;
-//         cleared: false,//boolean;
-//     },
-//     {
-//         id: "123510",
-//         title: "Laundry",
-//         details: "do the laundry or so help me god I will come and find you and you will wish that you had never ever ever ignored me",
-//         status: TaskStatus.Todo,
-//         priority: 2,//TaskPriority;
-//         effort: 3,//string;
-//         cleared: false,//boolean;
-//     },
-//     {
-//         id: "123511",
-//         title: "Laundry",
-//         details: "do the laundry or so help me god I will come and find you and you will wish that you had never ever ever ignored me",
-//         status: TaskStatus.Todo,
-//         priority: 2,//TaskPriority;
-//         effort: 3,//string;
-//         cleared: false,//boolean;
-//     },
-// ];

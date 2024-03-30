@@ -84,11 +84,13 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
                 onClose={() => setModalOpen(false)}
                 onAction={() => createCategory()}
                 actionDisabled={!validTaskCategory(createdCategory)}
+                actionBtnText="Add"
                 isLoading={createLoading}
                 errorMessage={createErr}
             >
                 <h3>Create New Category</h3>
                 <AppInput
+                    label="Category Name"
                     placeholder="Category Name"
                     onChange={editCreatedCategory}
                     value={createdCategory.name}

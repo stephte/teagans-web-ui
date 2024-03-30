@@ -12,9 +12,10 @@ interface ModalProps {
     children: any;
     isLoading?: boolean;
     errorMessage?: string;
+    wide?: boolean;
 }
 
-const Modal = ({ isOpen, onClose, onAction, actionBtnText, actionDisabled, children, isLoading, errorMessage }: ModalProps) => {
+const Modal = ({ isOpen, onClose, onAction, actionBtnText, actionDisabled, wide, children, isLoading, errorMessage }: ModalProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -34,7 +35,7 @@ const Modal = ({ isOpen, onClose, onAction, actionBtnText, actionDisabled, child
     if (isOpen) {
         return (
             <div className="modal">
-                <div className="modal-content" ref={modalRef}>
+                <div className={`modal-content ${wide ? 'wide' : ''}`} ref={modalRef}>
                     <LoadBox isLoading={isLoading} />
                     {children}
                     <div className={`modal-btns ${onAction ? 'double' : ''}`}>

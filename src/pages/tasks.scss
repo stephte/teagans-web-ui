@@ -29,10 +29,17 @@
 .task-btn {
     display: flex;
 	justify-content: center;
-    border-top: 1px solid $darkest-green;
+    border-top: 1px solid $darker-green;
 
     button {
         margin: auto;
         margin-top: 2em;
     }
+}
+
+p.error {
+    text-align: center;
+    font-size: 14px;
+    color: red;
+    margin-bottom: 0;
 }

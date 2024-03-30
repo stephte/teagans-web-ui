@@ -1,5 +1,3 @@
-import TaskCard from "../components/task-card";
-import TaskCategoryHeader from "../components/task-category-header";
 import { TaskStatus, TaskPriority, UserRole } from "./enums";
 
 export interface User {
@@ -18,6 +16,7 @@ export interface Task {
     details: string;
     status: TaskStatus;
     priority: TaskPriority;
+    position: number;
     effort: number;
     cleared: boolean;
 };

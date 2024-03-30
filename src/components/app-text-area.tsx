@@ -1,5 +1,5 @@
 import { ChangeEvent, FocusEvent, KeyboardEvent } from "react";
-import "./app-input.scss";
+import "./app-text-area.scss";
 
 interface TextAreaProps {
     value: string;
