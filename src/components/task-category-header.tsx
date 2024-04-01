@@ -33,7 +33,7 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
 			value = +value;
 		}
 
-        let cat = { ...createdCategory }
+        let cat = { ...createdCategory };
         cat[target.name] = value;
         setCreatedCategory(cat);
     };
@@ -74,7 +74,7 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
         setCategory(cat);
     }
 
-    // TODO: move 'add category' modal into its own component
+    // TODO: move 'add category' modal into its own component (will probably want to reuse in management page)
     // TODO: create category management page
     return (
         <div className="cat-wrapper">
@@ -97,15 +97,6 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
                     required
                     name="name"
                 />
-                {/* <AppInput
-                    placeholder="Category Position"
-                    onChange={editCreatedCategory}
-                    value={createdCategory.position}
-                    required
-                    name="position"
-                    type="number"
-                    min="1"
-                /> */}
             </Modal>
 
             <div className="cat-select">
@@ -118,8 +109,12 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
                         return { value: c.id, label: c.name };
                     })}
                 />
-                <span className="add-category-btn" onClick={() => setModalOpen(!modalOpen)}>Add Category</span>
-                <span className="add-category-btn" onClick={() => console.log('Category management')}>Manage Categories</span>
+                <div className="add-category-btn-div">
+                    <span className="add-category-btn" onClick={() => setModalOpen(!modalOpen)}>Add Category</span>
+                </div>
+                <div>
+                    <span className="add-category-btn" onClick={() => console.log('Category management')}>Manage Categories</span>
+                </div>
             </div>
         </div>
     );

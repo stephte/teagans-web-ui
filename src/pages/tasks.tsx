@@ -10,7 +10,6 @@ import { getTasks, getTaskCategories, createTask, updateTask } from "../data/tas
 import { TaskPriority, TaskStatus } from "../utilities/enums";
 import "./tasks.scss";
 import Button from "../components/button";
-import AppTextArea from "../components/app-text-area";
 import AppTextEditor from "../components/app-text-editor";
 
 const defaultTask = {
@@ -25,8 +24,7 @@ const defaultTask = {
 };
 
 // TODO: add task view/create/edit page
-// TODO: add task column sorting...?
-// TODO: display WSYWIG properly on task view page
+// TODO: display WSYWIG data properly on task view page
 const Tasks = () => {
     const currentUser = useAuthStore(state => state.user);
 
@@ -45,15 +43,16 @@ const Tasks = () => {
     const [dragging, setDragging] = useState<boolean>(false);
     const handleDragStart = (event: any) => {
         setDragging(true);
+        event.dataTransfer.setData("text/plain", "");
         event.dataTransfer.setData("taskId", event.target.id);
     };
-    const handleDragEnd = () => {
+    const handleDragEnd = (event) => {
+        event.preventDefault();
         setDragging(false);
     };
     const handleDrop = (event: any) => {
         event.preventDefault();
 
-        const taskId = event.dataTransfer.getData("taskId");
         const statusNode = getStatusNode(event.target, 0);
         const newStatusStr = statusNode.id;
         if (isNaN(+TaskStatus[newStatusStr])) {
@@ -61,14 +60,73 @@ const Tasks = () => {
         }
         setTaskPageErr("");
 
-        let task = tasks.find((t) => t.id === taskId);
+        const ogTaskList = [...tasks];
+
+        const taskId = event.dataTransfer.getData("taskId");
+        let task = { ...tasks.find((t) => t.id === taskId) };
+        const droppedOnCard = getCardNode(event.target, 0);
+        const droppedOnTask = { ...tasks.find(t => t.id === droppedOnCard.id) };
+        if (droppedOnTask.id === task.id) {
+            return;
+        }
+
         const oldStatus = task.status;
-        task.status = +TaskStatus[newStatusStr];
-        updateTask(task)
-            .catch((err) => {
-                setTaskPageErr(`Error updating task: ${err.response?.data?.error || err.message || ""}`);
-                task.status = oldStatus;
-            });
+        const newStatus = +TaskStatus[newStatusStr];
+
+        // update indexes of task's old status
+        const oldStatusList = tasks.filter(t => t.status === oldStatus);
+        const oldTaskNdx = oldStatusList.map(t => t.id).indexOf(task.id);
+        let updatedOldStatusList = [...oldStatusList.slice(0, oldTaskNdx), ...oldStatusList.slice(oldTaskNdx+1)];
+        updatedOldStatusList.forEach((t, ndx) => {
+            t.position = ndx;
+        });
+
+
+        let tasksToUpdate = [];
+        let newStatusList = [];
+        let updatedNewStatusList = [];
+        // if oldStatus === newStatus, then newList = oldList, else grab tasks of the new status
+        if (oldStatus === newStatus) {
+            newStatusList = [...updatedOldStatusList];
+            updatedOldStatusList = [];
+        } else {
+            task.status = newStatus;
+            newStatusList = tasks.filter(t => t.status === newStatus);
+            tasksToUpdate = updatedOldStatusList.slice(oldTaskNdx);
+        }
+
+        // handle list ordering
+        let droppedOnNdx = newStatusList.map(t => t.id).indexOf(droppedOnTask?.id);
+        droppedOnNdx = droppedOnNdx >= 0 ? droppedOnNdx : newStatusList.length;
+        updatedNewStatusList = [...newStatusList.slice(0, droppedOnNdx), task, ...newStatusList.slice(droppedOnNdx)];
+        updatedNewStatusList.forEach((t, ndx) => {
+            t.position = ndx;
+        });
+
+        // gather tasks to be updated
+        let startNdx = 0;
+        let endNdx = 0;
+        if (oldStatus === newStatus) {
+            startNdx = oldTaskNdx < droppedOnNdx ? oldTaskNdx : droppedOnNdx;
+            endNdx = (oldTaskNdx > droppedOnNdx ? oldTaskNdx : droppedOnNdx) + 1;
+        } else {
+            startNdx = droppedOnNdx;
+            endNdx = updatedNewStatusList.length;
+        }
+        tasksToUpdate = [...tasksToUpdate, ...updatedNewStatusList.slice(startNdx, endNdx)];
+
+        // update tasks on the page
+        setTasks([...tasks.filter(t => ![oldStatus, newStatus].includes(t.status)), ...updatedOldStatusList, ...updatedNewStatusList]);
+
+        // update all tasks that had their position changed
+        tasksToUpdate.forEach(tsk => {
+            updateTask(tsk)
+                .catch((err) => {
+                    setTaskPageErr(`Error updating task: ${err.response?.data?.error || err.message || ""}`);
+                    setTasks(ogTaskList);
+                });
+        });
+        setDragging(false);
     };
     // can update this to handle style changes to make updates more clear
     const handleDragOver = (event: any) => {
@@ -82,6 +140,13 @@ const Tasks = () => {
 
         return getStatusNode(node.parentNode, i+1);
     };
+    const getCardNode = (node: any, i: number) => {
+        if (i >= 3 || (node.classList.contains("task-card-wrapper"))) {
+            return node;
+        }
+
+        return getCardNode(node.parentNode, i+1);
+    }
     // end drag'n'drop stuff
 
     const getCategories = async () => {
@@ -152,7 +217,7 @@ const Tasks = () => {
         };
 
         createTask(newTask)
-            .then((res) => {
+            .then(() => {
                 fetchTasks();
                 setModalOpen(false);
             })
@@ -191,11 +256,9 @@ const Tasks = () => {
                 />
                 <AppTextEditor
                     value={createdTask.details}
-                    // name="details"
                     onChange={(v) => setCreatedTask({ ...createdTask, details: v })}
                     label="Details"
                     required
-                    // rows={10}
                 />
                 <AppSelect
                     label="Status"
@@ -231,34 +294,34 @@ const Tasks = () => {
             </div>
             {taskPageErr && <p className="error">{taskPageErr}</p>}
             <div id="" className="tasks-page" onDrop={handleDrop} onDragOver={handleDragOver}>
-                <div className="border-right" id={TaskStatus[TaskStatus.Waiting]}>
-                    <h3>WAITING</h3>
+                <div className="task-column border-right" id={TaskStatus[TaskStatus.Waiting]}>
+                    <h3>ON HOLD</h3>
                     {
-                        tasks?.filter(t => t.status === TaskStatus.Waiting).map(t => {
+                        tasks?.filter(t => t.status === TaskStatus.Waiting).map((t) => {
                             return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>
-                <div className="border-right" id={TaskStatus[TaskStatus.Todo]}>
+                <div className="task-column border-right" id={TaskStatus[TaskStatus.Todo]}>
                     <h3>TODO</h3>
                     {
-                        tasks?.filter(t => t.status === TaskStatus.Todo).map(t => {
+                        tasks?.filter(t => t.status === TaskStatus.Todo).map((t) => {
                             return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>
-                <div className="border-right" id={TaskStatus[TaskStatus.Started]}>
+                <div className="task-column border-right" id={TaskStatus[TaskStatus.Started]}>
                     <h3>STARTED</h3>
                     {
-                        tasks?.filter(t => t.status === TaskStatus.Started).map(t => {
+                        tasks?.filter(t => t.status === TaskStatus.Started).map((t) => {
                             return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>
-                <div id={TaskStatus[TaskStatus.Complete]}>
+                <div className="task-column" id={TaskStatus[TaskStatus.Complete]}>
                     <h3>COMPLETE</h3>
                     {
-                        tasks?.filter(t => t.status === TaskStatus.Complete).map(t => {
+                        tasks?.filter(t => t.status === TaskStatus.Complete).map((t) => {
                             return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
