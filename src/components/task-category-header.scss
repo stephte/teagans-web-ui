@@ -27,8 +27,15 @@
             color: $darker-green;
             font-size: 14px;
         }
-
         .add-category-btn:hover {
+            cursor: pointer;
+        }
+
+        .first-category-btn {
+            color: $darker-green;
+            font-size: 18px;
+        }
+        .first-category-btn:hover {
             cursor: pointer;
         }
     }

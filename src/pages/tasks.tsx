@@ -227,60 +227,64 @@ const Tasks = () => {
                 setCategory={setCategory}
                 refreshCategories={getCategories}
             />
-            <TaskModal
-                isOpen={modalOpen}
-                onClose={() => {
-                    setModalOpen(false);
-                }}
-                onSave={createOrUpdateTask}
-                isLoading={createLoading}
-                errorMessage={createErr}
-                task={{ ...currentTask }}
-            />
-            <div className="task-btn">
-                <Button
-                    text="Add Task"
-                    onClick={() => {
-                        setCurrentTask(createdTask);
-                        setModalOpen(true);
-                    }}
-                />
-            </div>
-            {taskPageErr && <p className="error">{taskPageErr}</p>}
-            <div id="" className="tasks-page" onDrop={handleDrop} onDragOver={handleDragOver}>
-                <div className="task-column border-right" id={TaskStatus[TaskStatus.Waiting]}>
-                    <h3>ON HOLD</h3>
-                    {
-                        tasks?.filter(t => t.status === TaskStatus.Waiting).map((t) => {
-                            return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
-                        })
-                    }
-                </div>
-                <div className="task-column border-right" id={TaskStatus[TaskStatus.Todo]}>
-                    <h3>TODO</h3>
-                    {
-                        tasks?.filter(t => t.status === TaskStatus.Todo).map((t) => {
-                            return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
-                        })
-                    }
-                </div>
-                <div className="task-column border-right" id={TaskStatus[TaskStatus.Started]}>
-                    <h3>STARTED</h3>
-                    {
-                        tasks?.filter(t => t.status === TaskStatus.Started).map((t) => {
-                            return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
-                        })
-                    }
-                </div>
-                <div className="task-column" id={TaskStatus[TaskStatus.Complete]}>
-                    <h3>COMPLETE</h3>
-                    {
-                        tasks?.filter(t => t.status === TaskStatus.Complete).map((t) => {
-                            return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
-                        })
-                    }
-                </div>
-            </div>
+            { taskCategories?.length &&
+                <>
+                    <TaskModal
+                        isOpen={modalOpen}
+                        onClose={() => {
+                            setModalOpen(false);
+                        }}
+                        onSave={createOrUpdateTask}
+                        isLoading={createLoading}
+                        errorMessage={createErr}
+                        task={{ ...currentTask }}
+                    />
+                    <div className="task-btn">
+                        <Button
+                            text="Add Task"
+                            onClick={() => {
+                                setCurrentTask(createdTask);
+                                setModalOpen(true);
+                            }}
+                        />
+                    </div>
+                    {taskPageErr && <p className="error">{taskPageErr}</p>}
+                    <div id="" className="tasks-page" onDrop={handleDrop} onDragOver={handleDragOver}>
+                        <div className="task-column border-right" id={TaskStatus[TaskStatus.Waiting]}>
+                            <h3>ON HOLD</h3>
+                            {
+                                tasks?.filter(t => t.status === TaskStatus.Waiting).map((t) => {
+                                    return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
+                                })
+                            }
+                        </div>
+                        <div className="task-column border-right" id={TaskStatus[TaskStatus.Todo]}>
+                            <h3>TODO</h3>
+                            {
+                                tasks?.filter(t => t.status === TaskStatus.Todo).map((t) => {
+                                    return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
+                                })
+                            }
+                        </div>
+                        <div className="task-column border-right" id={TaskStatus[TaskStatus.Started]}>
+                            <h3>STARTED</h3>
+                            {
+                                tasks?.filter(t => t.status === TaskStatus.Started).map((t) => {
+                                    return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
+                                })
+                            }
+                        </div>
+                        <div className="task-column" id={TaskStatus[TaskStatus.Complete]}>
+                            <h3>COMPLETE</h3>
+                            {
+                                tasks?.filter(t => t.status === TaskStatus.Complete).map((t) => {
+                                    return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
+                                })
+                            }
+                        </div>
+                    </div>
+                </>
+            }
         </>
     );
 };

@@ -74,7 +74,6 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
         setCategory(cat);
     }
 
-    // TODO: move 'add category' modal into its own component (will probably want to reuse in management page)
     // TODO: create category management page
     return (
         <div className="cat-wrapper">
@@ -100,21 +99,28 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
             </Modal>
 
             <div className="cat-select">
-                <AppSelect
-                    label="Categories"
-                    onChange={changeCategory}
-                    selectedValue={selectedCategory?.id || ""}
-                    name="category"
-                    selectList={taskCategories?.map((c) => {
-                        return { value: c.id, label: c.name };
-                    })}
-                />
-                <div className="add-category-btn-div">
-                    <span className="add-category-btn" onClick={() => setModalOpen(!modalOpen)}>Add Category</span>
-                </div>
-                <div>
-                    <span className="add-category-btn" onClick={() => console.log('Category management')}>Manage Categories</span>
-                </div>
+                { taskCategories?.length ?
+                    <>
+                        <AppSelect
+                            label="Categories"
+                            onChange={changeCategory}
+                            selectedValue={selectedCategory?.id || ""}
+                            name="category"
+                            selectList={taskCategories?.map((c) => {
+                                return { value: c.id, label: c.name };
+                            })}
+                        />
+                        <div className="add-category-btn-div">
+                            <span className="add-category-btn" onClick={() => setModalOpen(!modalOpen)}>Add Category</span>
+                        </div>
+                        <div>
+                            <span className="add-category-btn" onClick={() => console.log('Category management')}>Manage Categories</span>
+                        </div>
+                    </>
+                :
+                    <span className="first-category-btn" onClick={() => setModalOpen(!modalOpen)}>Create your first category by clicking here!</span>
+                }
+                
             </div>
         </div>
     );
