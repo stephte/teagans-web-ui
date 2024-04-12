@@ -17,10 +17,11 @@ interface TaskCardProps {
     dragging?: boolean;
     handleDragStart?: (event: any) => any;
     handleDragEnd?: (event: any) => any;
+    onClick: (event: any) => any;
 }
 
-const TaskCard = ({ task, dragging, handleDragStart, handleDragEnd }: TaskCardProps) => {
-    let doc = new DOMParser().parseFromString(task.details, 'text/html');
+const TaskCard = ({ task, dragging, handleDragStart, handleDragEnd, onClick }: TaskCardProps) => {
+    let doc = new DOMParser().parseFromString(task.detailHtml, 'text/html');
     let details = doc.body.textContent || "";
     if (details.length > MAXCHARS) {
         details = details.slice(0, MAXCHARS - 3) + "...";
@@ -30,7 +31,7 @@ const TaskCard = ({ task, dragging, handleDragStart, handleDragEnd }: TaskCardPr
         <div
             id={task.id}
             className="task-card-wrapper clickable"
-            onClick={() => console.log("i wuz clikd")}
+            onClick={onClick}
             draggable={dragging !== undefined && !dragging}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}

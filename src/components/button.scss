@@ -1,6 +1,6 @@
 @import "../styles/variables";
 
-button {
+.app-button {
 	text-align: center;
 	text-transform: uppercase;
 	padding: 10px;
@@ -13,7 +13,7 @@ button {
 	font-weight: bold;
 }
 
-button:disabled {
+.app-button:disabled {
 	cursor: default;
 	background: $dark-grey;
 	border-color: $light-grey;

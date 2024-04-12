@@ -13,7 +13,8 @@ export interface Task {
     id?: string;
     taskCategoryId: string;
     title: string;
-    details: string;
+    detailHtml: string;
+    detailJson: string;
     status: TaskStatus;
     priority: TaskPriority;
     position: number;
@@ -21,8 +22,8 @@ export interface Task {
     cleared: boolean;
 };
 
-export const validTask = ({ title, details, status, priority }: Task) => {
-    return Boolean(title && details && status >= TaskStatus.Todo && status <= TaskStatus.Complete && priority >= TaskPriority.Low && priority <= TaskPriority.Urgent);
+export const validTask = ({ title, status, priority }: Task) => {
+    return Boolean(title && status >= TaskStatus.Todo && status <= TaskStatus.Complete && priority >= TaskPriority.Low && priority <= TaskPriority.Urgent);
 };
 
 export interface TaskCategory {

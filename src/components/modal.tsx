@@ -9,13 +9,14 @@ interface ModalProps {
     onAction?: () => any;
     actionBtnText?: string;
     actionDisabled?: boolean;
+    cancelText?: string;
     children: any;
     isLoading?: boolean;
     errorMessage?: string;
     wide?: boolean;
 }
 
-const Modal = ({ isOpen, onClose, onAction, actionBtnText, actionDisabled, wide, children, isLoading, errorMessage }: ModalProps) => {
+const Modal = ({ isOpen, onClose, onAction, actionBtnText, actionDisabled, cancelText, wide, children, isLoading, errorMessage }: ModalProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -41,7 +42,7 @@ const Modal = ({ isOpen, onClose, onAction, actionBtnText, actionDisabled, wide,
                     <div className={`modal-btns ${onAction ? 'double' : ''}`}>
                         <div>
                             <Button
-                                text="Close"
+                                text={cancelText || "Close"}
                                 onClick={() => onClose()}
                             />
                         </div>

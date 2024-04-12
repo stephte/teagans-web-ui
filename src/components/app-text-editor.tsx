@@ -1,19 +1,68 @@
-import ReactQuill from "react-quill";
-import 'react-quill/dist/quill.snow.css';
+import { useEffect, useRef, forwardRef } from "react";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
 import "./app-text-editor.scss";
 
 interface TextEditorProps {
-    value: string;
-    onChange: (event: any) => void;
+    startValue: any;
+    onChange: (json: object, html: string) => void;
     readOnly?: boolean;
     label?: string;
     required?: boolean;
-    placeholder?: string;
     onBlur?: (event: any) => void;
     onFocus?: (event: any) => void;
+    quillRef: any;
 };
 
-const AppTextEditor = ({ value, readOnly, label, required, onChange, placeholder, onBlur, onFocus }: TextEditorProps) => {
+const AppTextEditor = ({ onChange, startValue, readOnly, quillRef, label, required }: TextEditorProps) => {
+    // const quillRef = useRef(null);
+    const containerRef = useRef(null);
+    // const startValueRef = useRef(startValue);   
+    // const defaultValueRef = useRef(value);
+
+    // useEffect(() => {
+    //     quillRef.current?.enable(!readOnly);
+    // }, [quillRef, readOnly]);
+
+    useEffect(() => {
+        const container = containerRef.current;
+        // if (!containerRef) return;
+        const editor = container.appendChild(container.ownerDocument.createElement("div"));
+		const quill = new Quill(editor, {
+			theme: 'snow',
+			// modules: {
+			// 	toolbar: [
+			// 		['bold', 'italic', 'underline', 'strike'],
+			// 		// Other options...
+			// 	],
+			// },
+		});
+
+        quillRef.current = quill;
+
+        if (startValue) {
+            // quill.setContents(startValueRef.current);
+            quill.setContents(startValue);
+        }
+
+		// Detect changes
+		quill.on(Quill.events.TEXT_CHANGE, () => {
+			let content = quill.root.innerHTML;
+            console.log("html content:");
+            console.log(content);
+            console.log("getContents:");
+            console.log(quill.getContents());
+            console.log("getSemanticHTML:");
+            console.log(quill.getSemanticHTML());
+			onChange(quill.getContents(), quill.getSemanticHTML());
+		});
+		return () => {
+			quill.off(Quill.events.TEXT_CHANGE);
+            quillRef.current = null;
+            container.innerHTML = '';
+		};
+	}, [quillRef]);
+
     return (
         <div className="app-text-editor">
             {label &&
@@ -21,16 +70,7 @@ const AppTextEditor = ({ value, readOnly, label, required, onChange, placeholder
                     {`${label}${required ? '*' : ''}`}
                 </label>
             }
-            <ReactQuill
-                className="quill"
-                value={value}
-                readOnly={readOnly}
-                placeholder={placeholder}
-                onChange={onChange}
-                onBlur={onBlur}
-                onFocus={onFocus}
-                theme="snow"
-            />
+            <div className="quill" ref={containerRef} />
         </div>
     );
 };

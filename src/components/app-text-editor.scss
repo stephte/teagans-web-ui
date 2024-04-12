@@ -1,7 +1,9 @@
 @import "../styles/variables";
 
 .quill {
+    width: 100%;
     margin-top: 5px;
+    border-radius: 10px;
     background: $very-light-grey;
     color: black;
 }

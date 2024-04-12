@@ -1,0 +1,22 @@
+@import "../styles/variables";
+
+
+.task-title {
+    color: lightgray;
+    margin-bottom: 5px;
+}
+
+.task-modal-details {
+    all: initial;
+    border: 1px solid $lighter-green;
+    border-radius: 10px;
+    background: lightgray;
+    color: black;
+    padding: 1em;
+}
+
+.task-value {
+    font-weight: bolder;
+    font-size: 20px;
+    color: lightgray;
+}

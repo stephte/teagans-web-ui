@@ -2,20 +2,18 @@ import { useState, useEffect } from "react";
 import useAuthStore from "../stores/auth-store";
 import TaskCard from "../components/task-card";
 import TaskCategoryHeader from "../components/task-category-header";
-import Modal from "../components/modal";
-import AppInput from "../components/app-input";
-import AppSelect from "../components/app-select";
-import { Task, TaskCategory, validTask } from "../utilities/types";
+import { Task, TaskCategory } from "../utilities/types";
 import { getTasks, getTaskCategories, createTask, updateTask } from "../data/task";
 import { TaskPriority, TaskStatus } from "../utilities/enums";
 import "./tasks.scss";
 import Button from "../components/button";
-import AppTextEditor from "../components/app-text-editor";
+import TaskModal from "./task-modal";
 
 const defaultTask = {
     taskCategoryId: "",
     title: "",
-    details: "",
+    detailHtml: "",
+    detailJson: "",
     status: TaskStatus.Todo,
     priority: TaskPriority.Low,
     position: 0,
@@ -23,8 +21,6 @@ const defaultTask = {
     cleared: false
 };
 
-// TODO: add task view/create/edit page
-// TODO: display WSYWIG data properly on task view page
 const Tasks = () => {
     const currentUser = useAuthStore(state => state.user);
 
@@ -36,6 +32,7 @@ const Tasks = () => {
     // modal stuff
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [createdTask, setCreatedTask] = useState<Task>({...defaultTask});
+    const [currentTask, setCurrentTask] = useState<Task>();
     const [createLoading, setCreateLoading] = useState<boolean>(false);
     const [createErr, setCreateErr] = useState<string>("");
 
@@ -85,6 +82,7 @@ const Tasks = () => {
         let tasksToUpdate = [];
         let newStatusList = [];
         let updatedNewStatusList = [];
+
         // if oldStatus === newStatus, then newList = oldList, else grab tasks of the new status
         if (oldStatus === newStatus) {
             newStatusList = [...updatedOldStatusList];
@@ -171,11 +169,13 @@ const Tasks = () => {
         }
     }, [taskCategories]);
 
-    const fetchTasks = () => {
+    const fetchTasks = (initTask: boolean) => {
         getTasks(category.id, "all", false)
                 .then((res) => {
                     setTasks(res.data.tasks);
-                    setCreatedTask({ ...defaultTask, position: res.data.tasks.length });
+                    if (initTask) {
+                        setCreatedTask({ ...defaultTask, position: res.data.tasks.length });
+                    }
                 })
                 .catch((err) => {
                     setTaskPageErr(err.response?.data?.error || err.message || "Error fetching tasks");
@@ -184,45 +184,36 @@ const Tasks = () => {
 
     useEffect(() => {
         if (category) {
-            fetchTasks();
+            fetchTasks(true);
         }
     }, [category]);
 
-    const editCreatedTask = ({ target }) => {
-        const name = target.name;
-        let value = target.value;
-        if (name === "status") {
-			value = TaskStatus[value];
-		} else if (name === "priority") {
-            value = TaskPriority[value];
-        } else if (target.type === "number") {
-			value = +value;
-		}
+    const cardClick = (event: any) => {
+        event.preventDefault();
 
-        let tsk = { ...createdTask }
-        tsk[name] = value;
-        setCreatedTask(tsk);
+        const taskCard = getCardNode(event.target, 0);
+        const taskId = taskCard.id;
+        let task = { ...tasks.find((t) => t.id === taskId) };
+
+        setCurrentTask(task);
+        setModalOpen(true);
     };
 
-    const createNewTask = () => {
-        if (!validTask(createdTask)) {
-            return;
-        }
+    const createOrUpdateTask = (task: Task) => {
+        console.log("create/update task hit!");
         setCreateLoading(true);
         setCreateErr("");
 
-        const newTask = {
-            ...createdTask,
-            taskCategoryId: category.id
-        };
+        task.taskCategoryId = category.id;
 
-        createTask(newTask)
-            .then(() => {
-                fetchTasks();
-                setModalOpen(false);
+        let apiCall = task.id ? updateTask : createTask;
+        apiCall(task)
+            .then((res) => {
+                fetchTasks(!task.id);
+                setCurrentTask(res.data);
             })
             .catch((err) => {
-                setCreateErr(err.response?.data?.error || err.message || "Error creating task");
+                setCreateErr(err.response?.data?.error || err.message || "Error updating task");
             })
             .finally(() => setCreateLoading(false));
     };
@@ -235,61 +226,23 @@ const Tasks = () => {
                 setCategory={setCategory}
                 refreshCategories={getCategories}
             />
-            <Modal
+            <TaskModal
                 isOpen={modalOpen}
-                onClose={() => setModalOpen(false)}
-                onAction={() => createNewTask()}
-                actionDisabled={!validTask(createdTask)}
-                actionBtnText="Add"
+                onClose={() => {
+                    setModalOpen(false);
+                }}
+                onSave={createOrUpdateTask}
                 isLoading={createLoading}
                 errorMessage={createErr}
-                wide
-            >
-                <h3>Create New Task</h3>
-                <AppInput
-                    label="Title"
-                    placeholder="Title"
-                    onChange={editCreatedTask}
-                    value={createdTask.title}
-                    required
-                    name="title"
-                />
-                <AppTextEditor
-                    value={createdTask.details}
-                    onChange={(v) => setCreatedTask({ ...createdTask, details: v })}
-                    label="Details"
-                    required
-                />
-                <AppSelect
-                    label="Status"
-                    enumObj={TaskStatus}
-                    onChange={editCreatedTask}
-                    name="status"
-					selectedValue={TaskStatus[createdTask.status]}
-                    required
-                />
-                <AppSelect
-                    label="Priority"
-                    enumObj={TaskPriority}
-                    onChange={editCreatedTask}
-                    name="priority"
-					selectedValue={TaskPriority[createdTask.priority]}
-                    required
-                />
-                <AppInput
-                    label="Effort"
-                    placeholder="Effort"
-                    onChange={editCreatedTask}
-                    value={createdTask.effort}
-                    name="effort"
-                    type="number"
-                    min="0"
-                />
-            </Modal>
+                task={{ ...currentTask }}
+            />
             <div className="task-btn">
                 <Button
                     text="Add Task"
-                    onClick={() => setModalOpen(true)}
+                    onClick={() => {
+                        setCurrentTask(createdTask);
+                        setModalOpen(true);
+                    }}
                 />
             </div>
             {taskPageErr && <p className="error">{taskPageErr}</p>}
@@ -298,7 +251,7 @@ const Tasks = () => {
                     <h3>ON HOLD</h3>
                     {
                         tasks?.filter(t => t.status === TaskStatus.Waiting).map((t) => {
-                            return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
+                            return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>
@@ -306,7 +259,7 @@ const Tasks = () => {
                     <h3>TODO</h3>
                     {
                         tasks?.filter(t => t.status === TaskStatus.Todo).map((t) => {
-                            return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
+                            return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>
@@ -314,7 +267,7 @@ const Tasks = () => {
                     <h3>STARTED</h3>
                     {
                         tasks?.filter(t => t.status === TaskStatus.Started).map((t) => {
-                            return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
+                            return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>
@@ -322,7 +275,7 @@ const Tasks = () => {
                     <h3>COMPLETE</h3>
                     {
                         tasks?.filter(t => t.status === TaskStatus.Complete).map((t) => {
-                            return <TaskCard key={t.id} task={t} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
+                            return <TaskCard key={t.id} task={t} onClick={cardClick} dragging={dragging} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
                         })
                     }
                 </div>

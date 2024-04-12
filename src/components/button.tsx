@@ -9,6 +9,7 @@ interface BtnProps {
 const Button = ({ text, onClick, disabled }: BtnProps) => {
 	return (
 		<button
+			className="app-button"
 			onClick={onClick}
 			disabled={disabled}
 		>
