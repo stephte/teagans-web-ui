@@ -29,7 +29,6 @@ const NewPassword = () => {
 				setErrMsg(err.response.data.error);
 			} else {
 				setErrMsg("Error with request");
-				console.log(err);
 			}
 		}).finally(() => setLoading(false));
 	};

@@ -121,7 +121,6 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
                                 quillRef={quillRef}
                                 onChange={updateDetails}
                                 label="Details"
-                                required
                             />
                             <AppSelect
                                 label="Status"
@@ -151,7 +150,7 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
                         </>
                     :
                         <>
-                            <h2 className="task-title">{updatedTask.id ? updatedTask.title : "Create New Task"}</h2>
+                            <h1 className="task-title">{updatedTask.id ? updatedTask.title : "Create New Task"}</h1>
                             <span>Details:</span>
                             <div className="task-modal-details" dangerouslySetInnerHTML={{ __html: updatedTask.detailHtml }} />
                             <span>Status:</span>

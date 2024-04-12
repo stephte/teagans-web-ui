@@ -36,6 +36,7 @@ const Tasks = () => {
     const [createLoading, setCreateLoading] = useState<boolean>(false);
     const [createErr, setCreateErr] = useState<string>("");
 
+
     // drag'n'drop stuff
     const [dragging, setDragging] = useState<boolean>(false);
     const handleDragStart = (event: any) => {
@@ -147,6 +148,7 @@ const Tasks = () => {
     }
     // end drag'n'drop stuff
 
+
     const getCategories = async () => {
         const rv = await getTaskCategories(currentUser.id)
             .catch((err) => {
@@ -200,7 +202,6 @@ const Tasks = () => {
     };
 
     const createOrUpdateTask = (task: Task) => {
-        console.log("create/update task hit!");
         setCreateLoading(true);
         setCreateErr("");
 

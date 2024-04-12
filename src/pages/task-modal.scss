@@ -2,7 +2,7 @@
 
 
 .task-title {
-    color: lightgray;
+    color: $lightest-green;
     margin-bottom: 5px;
 }
 
@@ -13,10 +13,12 @@
     background: lightgray;
     color: black;
     padding: 1em;
+    margin-bottom: 10px;
 }
 
 .task-value {
     font-weight: bolder;
     font-size: 20px;
-    color: lightgray;
+    color: $lightest-green;
+    margin: -5px 0 10px 0;
 }

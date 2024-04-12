@@ -20,13 +20,14 @@ const AppTextEditor = ({ onChange, startValue, readOnly, quillRef, label, requir
     // const startValueRef = useRef(startValue);   
     // const defaultValueRef = useRef(value);
 
-    // useEffect(() => {
-    //     quillRef.current?.enable(!readOnly);
-    // }, [quillRef, readOnly]);
+    useEffect(() => {
+        quillRef.current?.enable(!readOnly);
+    }, [quillRef, readOnly]);
 
     useEffect(() => {
         const container = containerRef.current;
-        // if (!containerRef) return;
+        // containerRef.current.style.borderRadius = "10px";
+        // containerRef.current.style.border = "1px solid blue";
         const editor = container.appendChild(container.ownerDocument.createElement("div"));
 		const quill = new Quill(editor, {
 			theme: 'snow',
@@ -48,12 +49,6 @@ const AppTextEditor = ({ onChange, startValue, readOnly, quillRef, label, requir
 		// Detect changes
 		quill.on(Quill.events.TEXT_CHANGE, () => {
 			let content = quill.root.innerHTML;
-            console.log("html content:");
-            console.log(content);
-            console.log("getContents:");
-            console.log(quill.getContents());
-            console.log("getSemanticHTML:");
-            console.log(quill.getSemanticHTML());
 			onChange(quill.getContents(), quill.getSemanticHTML());
 		});
 		return () => {
