@@ -74,6 +74,12 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
         setCategory(cat);
     }
 
+    const onPress = (e) => {
+		if (e.key === 'Enter') {
+			createCategory();
+		}
+	};
+
     // TODO: create category management page
     return (
         <div className="cat-wrapper">
@@ -93,6 +99,7 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
                     placeholder="Category Name"
                     onChange={editCreatedCategory}
                     value={createdCategory.name}
+                    onKeyDown={onPress}
                     required
                     name="name"
                 />
@@ -118,7 +125,15 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
                         </div>
                     </>
                 :
-                    <span className="first-category-btn" onClick={() => setModalOpen(!modalOpen)}>Create your first category by clicking here!</span>
+                    <>
+                        <p id="first-task-desc">
+                            This is the task management page, where you can create and manage your task list and keep your life more organized!!
+                            <br/>
+                            <br/>
+                            You can start by creating a category (i.e. 'Chores', 'Work', etc.)
+                        </p>
+                        <span className="first-category-btn" onClick={() => setModalOpen(!modalOpen)}>Create your first category by clicking here!</span>
+                    </>
                 }
                 
             </div>
