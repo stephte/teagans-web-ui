@@ -5,7 +5,7 @@ nav-bar {
 	display: inline-flex;
 	align-items: center;
 	background: $darkest-green;
-	border-bottom: 2px solid $lighter-green;
+	border-bottom: 2px solid $lightest-green;
 	overflow: auto;
 }
 
@@ -31,12 +31,12 @@ nav-bar li {
 	list-style: none;
 	display: inline;
 	padding: 1.5em;
-	color: $lighter-green;
+	color: $lightest-green;
 	text-decoration: none;
 	text-transform: uppercase;
-	border-left: 1px solid $lighter-green;
+	border-left: 1px solid $lightest-green;
 }
 
 .borderright {
-	border-right: 1px solid $lighter-green;
+	border-right: 1px solid $lightest-green;
 }
