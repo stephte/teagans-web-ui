@@ -30,6 +30,7 @@ const TaskCard = ({ task, dragging, handleDragStart, handleDragEnd, onClick }: T
     return (
         <div
             id={task.id}
+            // data-position={ndx}
             className="task-card-wrapper clickable"
             onClick={onClick}
             draggable={dragging !== undefined && !dragging}

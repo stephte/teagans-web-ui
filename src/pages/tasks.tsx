@@ -5,6 +5,7 @@ import TaskCategoryHeader from "../components/task-category-header";
 import { Task, TaskCategory } from "../utilities/types";
 import { getTasks, getTaskCategories, createTask, updateTask } from "../data/task";
 import { TaskPriority, TaskStatus } from "../utilities/enums";
+import { getCardNode } from "../utilities/functions";
 import "./tasks.scss";
 import Button from "../components/button";
 import TaskModal from "./task-modal";
@@ -41,7 +42,6 @@ const Tasks = () => {
     const [dragging, setDragging] = useState<boolean>(false);
     const handleDragStart = (event: any) => {
         setDragging(true);
-        event.dataTransfer.setData("text/plain", "");
         event.dataTransfer.setData("taskId", event.target.id);
     };
     const handleDragEnd = (event) => {
@@ -62,7 +62,7 @@ const Tasks = () => {
 
         const taskId = event.dataTransfer.getData("taskId");
         let task = { ...tasks.find((t) => t.id === taskId) };
-        const droppedOnCard = getCardNode(event.target, 0);
+        const droppedOnCard = getCardNode(event.target, "task-card-wrapper", 0);
         const droppedOnTask = { ...tasks.find(t => t.id === droppedOnCard.id) };
         if (droppedOnTask.id === task.id) {
             return;
@@ -139,13 +139,6 @@ const Tasks = () => {
 
         return getStatusNode(node.parentNode, i+1);
     };
-    const getCardNode = (node: any, i: number) => {
-        if (i >= 3 || (node.classList.contains("task-card-wrapper"))) {
-            return node;
-        }
-
-        return getCardNode(node.parentNode, i+1);
-    }
     // end drag'n'drop stuff
 
 
@@ -193,7 +186,7 @@ const Tasks = () => {
     const cardClick = (event: any) => {
         event.preventDefault();
 
-        const taskCard = getCardNode(event.target, 0);
+        const taskCard = getCardNode(event.target, "task-card-wrapper", 0);
         const taskId = taskCard.id;
         let task = { ...tasks.find((t) => t.id === taskId) };
 
@@ -226,6 +219,7 @@ const Tasks = () => {
                 selectedCategory={category}
                 setCategory={setCategory}
                 refreshCategories={getCategories}
+                setCategories={setTaskCategories}
             />
             { taskCategories?.length &&
                 <>

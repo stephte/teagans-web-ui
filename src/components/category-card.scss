@@ -1,0 +1,19 @@
+@import "../styles/variables";
+@import "../styles/mixins";
+
+.category-card-wrapper {
+    margin: auto;
+    min-width: 300px;
+    max-width: 400px;
+    // min-height: 75px;
+    margin-bottom: 5px;
+
+    .category-card {
+        text-align: center;
+        color: $darkest-green;
+        background: $transparent-lighter-green;
+        border: 1px solid $lighter-green;
+        border-radius: 10px;
+        padding: 10px;
+    }
+}
