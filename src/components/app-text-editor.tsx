@@ -14,6 +14,16 @@ interface TextEditorProps {
     quillRef: any;
 };
 
+const toolBarOptions = [
+    ['bold', 'italic', 'underline', 'strike'],
+    ['link', 'blockquote', 'code-block'],
+    [{ 'script': 'sub'}, { 'script': 'super' }],
+    [{ 'indent': '-1'}, { 'indent': '+1' }],
+    [{ 'direction': 'rtl' }],
+    [{ 'font': [] }],
+    [{ 'align': [] }],
+];
+
 const AppTextEditor = ({ onChange, startValue, readOnly, quillRef, label, required }: TextEditorProps) => {
     const containerRef = useRef(null);
 
@@ -26,12 +36,9 @@ const AppTextEditor = ({ onChange, startValue, readOnly, quillRef, label, requir
         const editor = container.appendChild(container.ownerDocument.createElement("div"));
 		const quill = new Quill(editor, {
 			theme: 'snow',
-			// modules: {
-			// 	toolbar: [
-			// 		['bold', 'italic', 'underline', 'strike'],
-			// 		// Other options...
-			// 	],
-			// },
+			modules: {
+				toolbar: toolBarOptions,
+			},
 		});
 
         quillRef.current = quill;
