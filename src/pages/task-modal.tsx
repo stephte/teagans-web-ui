@@ -191,7 +191,7 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
             cancelText={cancelText()}
             isLoading={isLoading}
             errorMessage={errorMessage}
-            subBtnText={!isDeleting && "CLEAR TASK"}
+            subBtnText={updatedTask?.id && !isDeleting && "CLEAR TASK"}
             subBtnAction={() => setDeleting(true)}
         >
             {getBody()}
