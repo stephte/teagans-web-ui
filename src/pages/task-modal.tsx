@@ -193,7 +193,6 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
             errorMessage={errorMessage}
             subBtnText={!isDeleting && "CLEAR TASK"}
             subBtnAction={() => setDeleting(true)}
-            wide
         >
             {getBody()}
         </Modal>
