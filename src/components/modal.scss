@@ -42,12 +42,19 @@
             grid-template-columns: auto auto;
         }
 
+        .subbtn {
+            text-align: center;
+            font-size: 12px;
+            margin-bottom: -10px;
+        }
+
         .error {
             text-align: center;
             font-size: 14px;
             color: red;
         }
     }
+
     .wide {
         min-width: 50%;
         max-width: 60%;

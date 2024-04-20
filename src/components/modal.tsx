@@ -14,9 +14,11 @@ interface ModalProps {
     isLoading?: boolean;
     errorMessage?: string;
     wide?: boolean;
+    subBtnText?: string;
+    subBtnAction?: (event: any) => void;
 }
 
-const Modal = ({ isOpen, onClose, onAction, actionBtnText, actionDisabled, cancelText, wide, children, isLoading, errorMessage }: ModalProps) => {
+const Modal = ({ isOpen, onClose, onAction, actionBtnText, actionDisabled, cancelText, wide, children, isLoading, errorMessage, subBtnText, subBtnAction }: ModalProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -56,6 +58,11 @@ const Modal = ({ isOpen, onClose, onAction, actionBtnText, actionDisabled, cance
                             </div>
                         }
                     </div>
+                    {subBtnText &&
+                        <div className="subbtn">
+                            <span className="clickable" onClick={subBtnAction}>{subBtnText}</span>
+                        </div>
+                    }
                     <span className="error">{errorMessage}</span>
                 </div>
             </div>

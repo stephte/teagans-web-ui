@@ -13,7 +13,7 @@ const Delta = Quill.import('delta');
 interface TaskModalProps {
     isOpen: boolean;
     onClose: () => any;
-    onSave: (e: any) => any;
+    onSave: (task: Task) => any;
     isLoading: boolean;
     errorMessage: string;
 
@@ -32,19 +32,24 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
     const [editingTask, setEditingTask] = useState<boolean>();
     const [updatedDetails, setUpdatedDetails] = useState<DetailObj>({ json: {}, html: "" });
     const [hasChanged, setHasChanged] = useState<boolean>();
+    const [isDeleting, setDeleting] = useState<boolean>(false);
 
     useEffect(() => {
-        setUpdatedTask(task);
+        setUpdatedTask({ ...task });
         setEditingTask(!task?.id);
         setUpdatedDetails({ json: JSON.parse(task?.detailJson || "{}"), html: task?.detailHtml });
         setHasChanged(false);
     }, [task]);
 
-    const ogDetailHtml = task?.detailHtml;
     const ogDetailJson = JSON.parse(task?.detailJson || "{}");
 
     const onAction = () => {
-        if (editingTask) {
+        if (isDeleting) {
+            const tsk = { ...task };
+            tsk.cleared = true;
+
+            onSave(tsk);
+        } else if (editingTask) {
             if (!validTask(updatedTask)) {
                 return;
             }
@@ -53,8 +58,6 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
             updatedTask.detailJson = JSON.stringify(updatedDetails.json);
 
             onSave(updatedTask);
-            setEditingTask(false);
-            setHasChanged(false);
         } else {
             setEditingTask(true);
         }
@@ -83,7 +86,9 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
     };
 
     const handleClose = () => {
-        if (updatedTask?.id && editingTask) {
+        if (isDeleting) {
+            setDeleting(false);
+        } else if (updatedTask?.id && editingTask) {
             setUpdatedTask(task);
             setEditingTask(false);
             setHasChanged(false);
@@ -92,77 +97,105 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
         }
     };
 
+    const getBody = () => {
+        if (!updatedTask) return <></>;
+
+        if (isDeleting) {
+            return (
+                <p>Are you sure you want to delete task '<b>{updatedTask.title}</b>'?</p>
+            );
+        } else if (editingTask) {
+            return (
+                <>
+                    <AppInput
+                        label="Title"
+                        placeholder="Title"
+                        onChange={handleChange}
+                        value={updatedTask.title}
+                        required
+                        name="title"
+                    />
+                    <AppTextEditor
+                        startValue={new Delta(ogDetailJson)}
+                        quillRef={quillRef}
+                        onChange={updateDetails}
+                        label="Details"
+                    />
+                    <AppSelect
+                        label="Status"
+                        enumObj={TaskStatus}
+                        onChange={handleChange}
+                        name="status"
+                        selectedValue={TaskStatus[updatedTask.status]}
+                        required
+                    />
+                    <AppSelect
+                        label="Priority"
+                        enumObj={TaskPriority}
+                        onChange={handleChange}
+                        name="priority"
+                        selectedValue={TaskPriority[updatedTask.priority]}
+                        required
+                    />
+                    <AppInput
+                        label="Effort"
+                        placeholder="Effort"
+                        onChange={handleChange}
+                        value={updatedTask.effort}
+                        name="effort"
+                        type="number"
+                        min="0"
+                    />
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <h1 className="task-title">{updatedTask.id ? updatedTask.title : "Create New Task"}</h1>
+                    <span>Details:</span>
+                    <div className="task-modal-details" dangerouslySetInnerHTML={{ __html: updatedTask.detailHtml }} />
+                    <span>Status:</span>
+                    <span className="task-value">{TaskStatus[updatedTask.status]}</span>
+                    <span>Priority:</span>
+                    <span className="task-value">{TaskPriority[updatedTask.status]}</span>
+                    <span>Effort:</span>
+                    <span className="task-value">{updatedTask.effort}</span>
+                </>
+            );
+        }
+    };
+
+    const actionBtnText = () => {
+        if (isDeleting) {
+            return "Clear";
+        } else if (editingTask) {
+            return updatedTask?.id ? "Update" : "Add";
+        }
+        return "Edit";
+    };
+
+    const cancelText = () => {
+        if (isDeleting || editingTask) {
+            return "Cancel"
+        }
+        return "Close";
+    };
+
     return (
         <Modal
             isOpen={isOpen}
             onClose={handleClose}
             onAction={onAction}
-            actionDisabled={editingTask ? !updatedTask || !hasChanged || !validTask(updatedTask): false}
-            actionBtnText={editingTask ? updatedTask?.id ? "Update" : "Add" : "Edit"}
-            cancelText={editingTask ? "Cancel" : "Close"}
+            actionDisabled={isLoading || (!isDeleting && (editingTask && !(updatedTask && hasChanged && validTask(updatedTask))))}
+            actionBtnText={actionBtnText()}
+            cancelText={cancelText()}
             isLoading={isLoading}
             errorMessage={errorMessage}
+            subBtnText={!isDeleting && "CLEAR TASK"}
+            subBtnAction={() => setDeleting(true)}
             wide
         >
-            {updatedTask &&
-                <>
-                    {editingTask ?
-                        <>
-                            <AppInput
-                                label="Title"
-                                placeholder="Title"
-                                onChange={handleChange}
-                                value={updatedTask.title}
-                                required
-                                name="title"
-                            />
-                            <AppTextEditor
-                                startValue={new Delta(ogDetailJson)}
-                                quillRef={quillRef}
-                                onChange={updateDetails}
-                                label="Details"
-                            />
-                            <AppSelect
-                                label="Status"
-                                enumObj={TaskStatus}
-                                onChange={handleChange}
-                                name="status"
-                                selectedValue={TaskStatus[updatedTask.status]}
-                                required
-                            />
-                            <AppSelect
-                                label="Priority"
-                                enumObj={TaskPriority}
-                                onChange={handleChange}
-                                name="priority"
-                                selectedValue={TaskPriority[updatedTask.priority]}
-                                required
-                            />
-                            <AppInput
-                                label="Effort"
-                                placeholder="Effort"
-                                onChange={handleChange}
-                                value={updatedTask.effort}
-                                name="effort"
-                                type="number"
-                                min="0"
-                            />
-                        </>
-                    :
-                        <>
-                            <h1 className="task-title">{updatedTask.id ? updatedTask.title : "Create New Task"}</h1>
-                            <span>Details:</span>
-                            <div className="task-modal-details" dangerouslySetInnerHTML={{ __html: updatedTask.detailHtml }} />
-                            <span>Status:</span>
-                            <span className="task-value">{TaskStatus[updatedTask.status]}</span>
-                            <span>Priority:</span>
-                            <span className="task-value">{TaskPriority[updatedTask.status]}</span>
-                            <span>Effort:</span>
-                            <span className="task-value">{updatedTask.effort}</span>
-                        </>
-                    }
-                </>
-            }
+            {getBody()}
         </Modal>
     );
 }

@@ -118,6 +118,7 @@ const Tasks = () => {
         setTasks([...tasks.filter(t => ![oldStatus, newStatus].includes(t.status)), ...updatedOldStatusList, ...updatedNewStatusList]);
 
         // update all tasks that had their position changed
+        // TODO: create endpoint for updating multiple tasks at once
         tasksToUpdate.forEach(tsk => {
             updateTask(tsk)
                 .catch((err) => {
@@ -204,7 +205,11 @@ const Tasks = () => {
         apiCall(task)
             .then((res) => {
                 fetchTasks(!task.id);
-                setCurrentTask(res.data);
+                if (res.data.cleared) {
+                    setModalOpen(false);
+                } else {
+                    setCurrentTask(res.data);
+                }
             })
             .catch((err) => {
                 setCreateErr(err.response?.data?.error || err.message || "Error updating task");
