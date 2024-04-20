@@ -14,6 +14,7 @@ import NavBar from "./components/navbar";
 import DownloadVid from "./pages/download";
 import Users from "./pages/users";
 import useAuthStore from "./stores/auth-store";
+import Tasks from "./pages/tasks";
 import { getUser } from "./data/user";
 import "./App.scss";
 
@@ -25,7 +26,7 @@ function App() {
         if (isAuthed && clearUser) {
             getUser("current")
                 .catch((err) => {
-                    if (err.response.status === 401) {
+                    if (err.response?.status === 401) {
                         clearUser();
                     }
                 });
@@ -44,11 +45,12 @@ function App() {
                 <Route path="/new-password" element={<RequireNoAuth> <NewPassword /> </RequireNoAuth>} />
 
                 {/*authed routes*/}
-                <Route path="/download" element={<RequireAuth> <DownloadVid /> </RequireAuth>} />
                 <Route path="/users" element={<RequireAuth authLevel={2}> <Users /> </RequireAuth>} />
                 <Route path="/users/:id" element={<RequireAuth> <CreateEditUser /> </RequireAuth>} />
                 <Route path="/add-user" element={<RequireAuth authLevel={2}> <CreateEditUser /> </RequireAuth>} />
                 <Route path="/delete-user/:id" element={<RequireAuth> <DeleteUser /> </RequireAuth>} />
+                <Route path="/download" element={<RequireAuth> <DownloadVid /> </RequireAuth>} />
+                <Route path="/tasks" element={<RequireAuth> <Tasks /> </RequireAuth>} />
 
                 {/*dont care routes*/}
                 <Route path="/" element={<Home />} />

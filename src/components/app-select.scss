@@ -1,8 +1,8 @@
 @import "../styles/variables";
 @import "../styles/mixins";
 
-.input-label {
-    @include input-label;
+.select-label {
+    @include label;
 }
 
 .app-select {

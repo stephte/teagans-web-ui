@@ -2,7 +2,7 @@
 @import "../styles/mixins";
 
 .input-label {
-	@include input-label;
+	@include label;
 }
 
 .app-input {

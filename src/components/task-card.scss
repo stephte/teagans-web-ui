@@ -1,0 +1,42 @@
+@import "../styles/variables";
+@import "../styles/mixins";
+
+.task-card-wrapper {
+    margin: auto;
+    min-width: 250px;
+    max-width: 400px;
+    min-height: 100px;
+
+    .task-card {
+        display: grid;
+        grid-template-columns: 33.3% 33.3% 33.3%;
+        padding: 10px;
+        margin: 5px 0 5px 0;
+        border: 2px solid $darkest-green;
+        border-radius: 15px;
+        row-gap: 10px;
+        color: $darkest-green;
+        background: $transparent-lighter-green;
+
+        >div {
+            text-align: center;
+        }
+
+        .name {
+            grid-column: 1/4;
+            grid-row: 1/2;
+            font-weight: bolder;
+            font-size: 20px;
+        }
+
+        .details {
+            grid-column: 1/4;
+            grid-row: 2/3;
+        }
+
+        .bottom {
+            text-transform: uppercase;
+            font-size: 15px;
+        }
+    }
+}

@@ -8,7 +8,8 @@ form-box {
 
 	h2 {
 		text-align: center;
-		color: $lighter-green;
+		color: $lightest-green;
+		text-transform: uppercase;
 	}
 
 	.container {
@@ -23,10 +24,10 @@ form-box {
 		width: 25%;
 		min-width: 300px;
 		background: $darkest-green;
-		border: 2px solid $lighter-green;
+		border: 2px solid $lightest-green;
 		border-radius: 50px;
 
-		button {
+		>button {
 			@include form-button;
 		}
 	}
@@ -43,7 +44,7 @@ form-box {
 
 	p {
 		text-align: center;
-		color: $lighter-green;
+		color: $lightest-green;
 	}
 
 	.sublink {

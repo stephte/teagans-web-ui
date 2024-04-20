@@ -163,7 +163,6 @@ const CreateEditUser = () => {
 			setErrMsg(err.response.data.error);
 		} else {
 			setErrMsg("Error with request");
-			console.log(err);
 		}
 		setLoading(false);
 	};
@@ -178,6 +177,7 @@ const CreateEditUser = () => {
 		<FormBox errMsg={errMsg} subLinks={subLinks} isLoading={loading}>
 			<h2>{id ? "Edit User" : "Create Account"}</h2>
 			<AppInput
+				label="First Name"
 				placeholder="First Name"
 				onChange={updateData}
 				value={userData.firstName}
@@ -187,6 +187,7 @@ const CreateEditUser = () => {
 				disabled={!editEnabled}
 			/>
 			<AppInput
+				label="Last Name"
 				placeholder="Last Name"
 				onChange={updateData}
 				value={userData.lastName}
@@ -196,6 +197,7 @@ const CreateEditUser = () => {
 				disabled={!editEnabled}
 			/>
 			<AppInput
+				label="Email"
 				placeholder="Email"
 				onChange={updateData}
 				value={userData.email}
@@ -220,6 +222,7 @@ const CreateEditUser = () => {
 				(
 					<>
 						<AppInput
+							label="Password"
 							placeholder="Password"
 							onChange={updateData}
 							value={userData.password}
@@ -229,6 +232,7 @@ const CreateEditUser = () => {
 							onKeyDown={onPress}
 						/>
 						<AppInput
+							label="Confirm Password"
 							placeholder="Confirm Password"
 							onChange={updateData}
 							value={userData.passwordConf}

@@ -1,19 +1,19 @@
 @import "../styles/variables";
 
-button {
+.app-button {
 	text-align: center;
 	text-transform: uppercase;
 	padding: 10px;
 	border-radius: 50px;
 	width: 100px;
 	cursor: pointer;
-	border: 2px solid $lighter-green;
+	border: 2px solid $lightest-green;
 	background: $darkest-green;
-	color: $lighter-green;
+	color: $lightest-green;
 	font-weight: bold;
 }
 
-button:disabled {
+.app-button:disabled {
 	cursor: default;
 	background: $dark-grey;
 	border-color: $light-grey;

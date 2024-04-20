@@ -1,0 +1,57 @@
+@import "../styles/variables";
+
+.cat-wrapper {
+    margin: 25px 0 25px 0;
+    display: flex;
+    justify-content: center;
+
+    .cat-select {
+        display: grid;
+        width: 25%;
+        min-width: 300px;
+        gap: 15px;
+        text-align: center;
+
+        label {
+            color: $darkest-green;
+        }
+
+        .app-select {
+            margin-bottom: 0;
+        }
+
+        .add-category-btn-div {
+            margin: 0 0 -8px 0;
+        }
+
+        .add-category-btn {
+            color: $darker-green;
+            font-size: 14px;
+        }
+        .add-category-btn:hover {
+            cursor: pointer;
+        }
+
+        .first-category-btn {
+            color: $darker-green;
+            font-size: 18px;
+        }
+        .first-category-btn:hover {
+            cursor: pointer;
+        }
+
+        #first-task-desc {
+            font-size: 18px;
+        }
+    }
+
+    #categories-container {
+        text-align: center;
+        color: $lightest-green;
+        padding: 0px 10px 0px 10px;
+
+        >h3 {
+            margin-bottom: 25px;
+        }
+    }
+}

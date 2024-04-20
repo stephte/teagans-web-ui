@@ -1,0 +1,45 @@
+@import "../styles/variables";
+@import "../styles/mixins";
+
+.tasks-page {
+    width: 100%;
+    margin: 25px 0 25px 0;
+    display: inline-grid;
+    grid-template-columns: repeat(4, minmax(300px, 1fr));
+    grid-auto-rows: 100%;
+    height: 100%;
+    overflow: auto;
+
+    .task-column {
+        text-align: center;
+        color: $darkest-green;
+        padding: 0 10px 100px 10px;
+        margin-bottom: 25px;
+
+        h3 {
+            margin-top: 0;
+        }
+    }
+
+    .border-right {
+        border-right: 2px solid $darker-green;
+    }
+}
+
+.task-btn {
+    display: flex;
+	justify-content: center;
+    border-top: 1px solid $darker-green;
+
+    button {
+        margin: auto;
+        margin-top: 2em;
+    }
+}
+
+p.error {
+    text-align: center;
+    font-size: 14px;
+    color: red;
+    margin-bottom: 0;
+}

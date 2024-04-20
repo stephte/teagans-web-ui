@@ -29,7 +29,6 @@ const DownloadVid = () => {
 					setErrMsg(err.response.data.error);
 				} else {
 					setErrMsg("Invalid YouTube URL");
-					console.log(err);
 				}
 			}).finally(() => setLoading(false));
 	};

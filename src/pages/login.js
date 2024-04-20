@@ -67,7 +67,6 @@ const Login = () => {
 					setErrMsg(err.response.data.error);
 				} else {
 					setErrMsg("Error with request");
-					console.log(err);
 				}
 				setLoading(false);
 			});
