@@ -1,4 +1,4 @@
-import { useEffect, useRef, forwardRef } from "react";
+import { useEffect, useRef } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import "./app-text-editor.scss";
@@ -15,13 +15,12 @@ interface TextEditorProps {
 };
 
 const toolBarOptions = [
+    [{ 'font': [] }],
     ['bold', 'italic', 'underline', 'strike'],
     ['link', 'blockquote', 'code-block'],
     [{ 'script': 'sub'}, { 'script': 'super' }],
-    [{ 'indent': '-1'}, { 'indent': '+1' }],
+    [{ 'align': [] }, { 'indent': '-1'}, { 'indent': '+1' }],
     [{ 'direction': 'rtl' }],
-    [{ 'font': [] }],
-    [{ 'align': [] }],
 ];
 
 const AppTextEditor = ({ onChange, startValue, readOnly, quillRef, label, required }: TextEditorProps) => {
