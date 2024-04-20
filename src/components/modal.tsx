@@ -63,7 +63,9 @@ const Modal = ({ isOpen, onClose, onAction, actionBtnText, actionDisabled, cance
                             <span className="clickable" onClick={subBtnAction}>{subBtnText}</span>
                         </div>
                     }
-                    <span className="error">{errorMessage}</span>
+                    {errorMessage &&
+                        <span className="error">{errorMessage}</span>
+                    }
                 </div>
             </div>
         );

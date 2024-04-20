@@ -144,14 +144,15 @@ const Tasks = () => {
 
 
     const getCategories = async () => {
-        const rv = await getTaskCategories(currentUser.id)
+        const res = await getTaskCategories(currentUser.id)
             .catch((err) => {
                 setTaskPageErr(err.response?.data?.error || err.message || "Error fetching categories");
                 return null;
             });
 
-        setTaskCategories(rv.data.taskCategories);
-        return rv.data.taskCategories;
+        const rv = res?.data?.taskCategories || [];
+        setTaskCategories(rv);
+        return rv;
     }
 
     useEffect(() => {

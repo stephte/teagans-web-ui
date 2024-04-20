@@ -3,8 +3,8 @@ import Modal from "./modal";
 import AppInput from "../components/app-input";
 import AppSelect from "./app-select";
 import "./task-category-header.scss";
-import { useEffect, useState } from "react";
-import { createTaskCategory, updateTaskCategory } from "../data/task";
+import { useState } from "react";
+import { createTaskCategory, deleteTaskCategory, updateTaskCategory } from "../data/task";
 import CategoryCard from "./category-card";
 import { getCardNode } from "../utilities/functions";
 
@@ -16,12 +16,11 @@ interface TaskCatHeaderProps {
     setCategories: (categories: TaskCategory[]) => void;
 };
 
-const defaultCategory = { id: "", name: "", position: 1 };
+const defaultCategory = { id: "", name: "", position: 0 };
 
 const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, refreshCategories, setCategories }: TaskCatHeaderProps) => {
 
     // category create
-    const [createdCategory, setCreatedCategory] = useState<TaskCategory>(defaultCategory);
     const [isLoading, setLoading] = useState<boolean>(false);
     const [createErr, setCreateErr] = useState<string>("");
 
@@ -29,13 +28,9 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [isEditingCategory, setEditingCategory] = useState<boolean>(false);
     const [currentCategory, setCurrentCategory] = useState<TaskCategory>();
-    // const [manageErr, setManageErr] = useState<string>("");
-
-    useEffect(() => {
-        if (taskCategories) {
-            setCreatedCategory({ ...createdCategory, position: taskCategories.length+1 });
-        }
-    }, [taskCategories]);
+    const [hasChanged, setHasChanged] = useState<boolean>(false);
+    const [creatingFromManagePage, setCreatingFromManagePage] = useState<boolean>(false);
+    const [isDeleting, setDeleting] = useState<boolean>(false);
 
     const editCurrentCategory = ({ target }) => {
         let value = target.value;
@@ -43,9 +38,10 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
 			value = +value;
 		}
 
-        let cat = { ...createdCategory };
+        let cat = { ...currentCategory };
         cat[target.name] = value;
         setCurrentCategory(cat);
+        setHasChanged(true);
     };
 
     const createUpdateCategory = () => {
@@ -64,6 +60,7 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
                             if (cats) {
                                 setCurrentCategory(updatedCat);
                                 setEditingCategory(false);
+                                setHasChanged(false);
                             }
                         }).finally(() => {
                             setLoading(false);
@@ -80,12 +77,13 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
                     refreshCategories()
                         .then((cats) => {
                             if (cats) {
-                                setCurrentCategory({ ...defaultCategory, position: cats.length+1 });
+                                setCurrentCategory({ ...defaultCategory, position: cats.length });
                                 setCategory(newCat);
                             }
                         }).finally(() => {
                             setEditingCategory(false);
-                            setModalOpen(false);
+                            setHasChanged(false);
+                            setModalOpen(creatingFromManagePage);
                             setLoading(false);
                         });
                 })
@@ -120,7 +118,6 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
 
         const ogList = [...taskCategories];
 
-        // const ogCatId = event.dataTransfer.getData("categoryId");
         const ogCatNdx = +event.dataTransfer.getData("ogNdx");
         let category = ogList[ogCatNdx];
 
@@ -147,6 +144,7 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
         setCategories(newList);
 
         // update all tasks that had their position changed
+        // TODO: create endpoint for updating multiple categories at once
         catsToUpdate.forEach(cat => {
             updateTaskCategory(cat)
                 .catch((err) => {
@@ -168,21 +166,133 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
 	};
 
     const handleModalCloseBtn = () => {
-        if (isEditingCategory) {
+        if (isDeleting) {
+            setDeleting(false);
+        } else if (isEditingCategory) {
+            if (!(currentCategory.id || creatingFromManagePage)) {
+                setModalOpen(false);
+            }
+            setCurrentCategory({ ...taskCategories.find((tc) => tc.id === currentCategory.id) });
             setEditingCategory(false);
+            setHasChanged(false);
         } else {
             setModalOpen(false);
         }
     };
 
     const handleModalAction = () => {
-
+        setLoading(true);
+        if (isDeleting) {
+            deleteTaskCategory(currentCategory.id)
+                .then(() => {
+                    setEditingCategory(false);
+                    setHasChanged(false);
+                    setDeleting(false);
+                    refreshCategories()
+                        .then((res) => {
+                            if (!res.length) {
+                                setModalOpen(false);
+                            } else if (currentCategory.id === selectedCategory.id) {
+                                setCategory(res[0]);
+                            }
+                            setLoading(false);
+                        });
+                })
+                .catch((err) => {
+                    setCreateErr(`Error deleting category: ${err.response?.data?.error || err.message || ""}`);
+                    setLoading(false);
+                });
+        } else if (isEditingCategory) {
+            createUpdateCategory();
+        }
     };
 
-    const openCreateModal = () => {
-        setCurrentCategory({ ...defaultCategory });
+    const openCreateModal = (fromManagePage: boolean) => {
+        setCurrentCategory({ ...defaultCategory, position: taskCategories.length });
+        setDeleting(false);
         setEditingCategory(true);
-        setModalOpen(!modalOpen);
+        setHasChanged(false);
+        setModalOpen(true);
+        setCreatingFromManagePage(fromManagePage);
+    };
+
+    const getModalContent = () => {
+        if (isDeleting) {
+            return (
+                <>
+                    <p>Are you sure wou want to delete category '<b>{currentCategory.name}</b>'?</p>
+                    <p>WARNING: This category AND all of its tasks will be lost!!</p>
+                </>
+            );
+        } else if (isEditingCategory) {
+            return (
+                <>
+                    <h3>{currentCategory.id ? "Edit Category" : "Create Category"}</h3>
+                    <AppInput
+                        label="Category Name"
+                        placeholder="Category Name"
+                        onChange={editCurrentCategory}
+                        value={currentCategory.name}
+                        onKeyDown={onPress}
+                        required
+                        name="name"
+                    />
+                </>
+            ); 
+        } else {
+            return (
+                <div id="categories-container" onDrop={handleDrop} onDragOver={handleDragOver}>
+                    <h3>Manage Categories</h3>
+                    {
+                        taskCategories?.map((cat, ndx) => {
+                            return (
+                                <CategoryCard
+                                    key={cat.id}
+                                    index={ndx}
+                                    category={cat}
+                                    onClick={() => {
+                                        setCurrentCategory({ ...cat });
+                                        setEditingCategory(true);
+                                        setHasChanged(false);
+                                    }}
+                                    handleDragStart={handleDragStart}
+                                    handleDragEnd={handleDragEnd}
+                                    dragging={dragging}
+                                />
+                            );
+                        })
+                    }
+                </div>
+            );
+        }
+    };
+
+    const actionBtnText = () => {
+        if (isDeleting) {
+            return "Delete";
+        } else if (isEditingCategory) {
+            return currentCategory.id ? "Update" : "Create";
+        }
+
+        return null;
+    };
+
+    const subBtnAction = () => {
+        if (isEditingCategory) {
+            setDeleting(true);
+        } else {
+            openCreateModal(true);
+        }
+    };
+
+    const getSubBtnText = () => {
+        if (isEditingCategory && !isDeleting && currentCategory?.id) {
+            return "DELETE CATEGORY";
+        } else if (!(isEditingCategory || isDeleting)) {
+            return "ADD CATEGORY";
+        } else {
+            return null;
+        }
     };
 
     return (
@@ -190,49 +300,16 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
             <Modal
                 isOpen={modalOpen}
                 onClose={handleModalCloseBtn}
-                cancelText={isEditingCategory ? "Cancel" : "Close"}
-                onAction={isEditingCategory ? handleModalAction : null}
-                actionBtnText={isEditingCategory ? currentCategory.id ? "Update" : "Create" : null}
-                actionDisabled={isEditingCategory && !validTaskCategory(currentCategory)}
+                cancelText={isEditingCategory || isDeleting ? "Cancel" : "Close"}
+                onAction={isEditingCategory || isDeleting ? handleModalAction : null}
+                actionBtnText={actionBtnText()}
+                actionDisabled={!currentCategory || isLoading || (!isDeleting && (isEditingCategory && !(hasChanged && validTaskCategory(currentCategory))))}
                 isLoading={isLoading}
                 errorMessage={createErr}
+                subBtnText={getSubBtnText()}
+                subBtnAction={() => subBtnAction()}
             >
-                {isEditingCategory ?
-                    <>
-                        <h3>{currentCategory.id ? "Edit Category" : "Create Category"}</h3>
-                        <AppInput
-                            label="Category Name"
-                            placeholder="Category Name"
-                            onChange={editCurrentCategory}
-                            value={currentCategory.name}
-                            onKeyDown={onPress}
-                            required
-                            name="name"
-                        />
-                    </>
-                :
-                    <div id="categories-container" onDrop={handleDrop} onDragOver={handleDragOver}>
-                        <h3>Manage Categories</h3>
-                        {
-                            taskCategories?.map((cat, ndx) => {
-                                return (
-                                    <CategoryCard
-                                        key={cat.id}
-                                        index={ndx}
-                                        category={cat}
-                                        onClick={() => {
-                                            setCurrentCategory(cat);
-                                            setEditingCategory(true);
-                                        }}
-                                        handleDragStart={handleDragStart}
-                                        handleDragEnd={handleDragEnd}
-                                        dragging={dragging}
-                                    />
-                                );
-                            })
-                        }
-                    </div>
-                }
+                {getModalContent()}
             </Modal>
 
             <div className="cat-select">
@@ -248,7 +325,7 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
                             })}
                         />
                         <div className="add-category-btn-div">
-                            <span className="add-category-btn" onClick={() => openCreateModal()}>
+                            <span className="add-category-btn" onClick={() => openCreateModal(false)}>
                                 Add Category
                             </span>
                         </div>
@@ -256,6 +333,9 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
                             <span
                                 className="add-category-btn"
                                 onClick={() => {
+                                    setDeleting(false);
+                                    setEditingCategory(false);
+                                    setHasChanged(false);
                                     setModalOpen(true);
                                 }}
                             >
@@ -273,7 +353,7 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
                         </p>
                         <span
                             className="first-category-btn"
-                            onClick={() => openCreateModal()}
+                            onClick={() => openCreateModal(false)}
                         >
                             Create your first category by clicking here!</span>
                     </>

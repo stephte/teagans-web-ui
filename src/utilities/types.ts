@@ -33,5 +33,5 @@ export interface TaskCategory {
 };
 
 export const validTaskCategory = ({ name, position }: TaskCategory) => {
-    return Boolean(name && position >= 1);
+    return Boolean(name && position >= 0);
 };
