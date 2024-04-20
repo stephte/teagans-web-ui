@@ -11,7 +11,7 @@ import AppSelect from "../components/app-select.js";
 const CreateEditUser = () => {
 	const currentUser = useAuthStore(state => state.user);
 	const isAuthed = useAuthStore(state => state.isAuthed);
-	const updateCurrentUser = useAuthStore(state => state.user);
+	const updateCurrentUser = useAuthStore(state => state.updateUser);
 	const loginUser = useAuthStore((authState) => authState.login);
 
 	const { id } = useParams();
@@ -159,6 +159,7 @@ const CreateEditUser = () => {
 	};
 
 	const handleErrRes = (err) => {
+		console.log(err);
 		if (err?.response?.data?.error) {
 			setErrMsg(err.response.data.error);
 		} else {
