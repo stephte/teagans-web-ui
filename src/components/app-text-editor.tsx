@@ -15,20 +15,17 @@ interface TextEditorProps {
 };
 
 const toolBarOptions = [
-    [{ 'font': [] }],
+    // [{ 'font': [] }],
     ['bold', 'italic', 'underline', 'strike'],
     ['link', 'blockquote', 'code-block'],
-    [{ 'script': 'sub'}, { 'script': 'super' }],
-    [{ 'align': [] }, { 'indent': '-1'}, { 'indent': '+1' }],
-    [{ 'direction': 'rtl' }],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+    // [{ 'script': 'sub'}, { 'script': 'super' }],
+    // [{ 'align': [] }, { 'indent': '-1'}, { 'indent': '+1' }],
+    // [{ 'direction': 'rtl' }],
 ];
 
 const AppTextEditor = ({ onChange, startValue, readOnly, quillRef, label, required }: TextEditorProps) => {
     const containerRef = useRef(null);
-
-    useEffect(() => {
-        quillRef.current?.enable(!readOnly);
-    }, [quillRef, readOnly]);
 
     useEffect(() => {
         const container = containerRef.current;
@@ -41,6 +38,7 @@ const AppTextEditor = ({ onChange, startValue, readOnly, quillRef, label, requir
 		});
 
         quillRef.current = quill;
+        quillRef.current?.enable(!readOnly);
 
         if (startValue) {
             quill.setContents(startValue);

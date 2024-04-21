@@ -39,6 +39,7 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
         setEditingTask(!task?.id);
         setUpdatedDetails({ json: JSON.parse(task?.detailJson || "{}"), html: task?.detailHtml });
         setHasChanged(false);
+        setDeleting(false);
     }, [task]);
 
     const ogDetailJson = JSON.parse(task?.detailJson || "{}");
@@ -153,7 +154,9 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
                 <>
                     <h1 className="task-title">{updatedTask.id ? updatedTask.title : "Create New Task"}</h1>
                     <span>Details:</span>
-                    <div className="task-modal-details" dangerouslySetInnerHTML={{ __html: updatedTask.detailHtml }} />
+                    <div className="task-modal-details" dangerouslySetInnerHTML={{ __html: updatedTask.detailHtml }}>
+                        {/* <div className="ql-editor" dangerouslySetInnerHTML={{ __html: updatedTask.detailHtml }} /> */}
+                    </div>
                     <span>Status:</span>
                     <span className="task-value">{TaskStatus[updatedTask.status]}</span>
                     <span>Priority:</span>
