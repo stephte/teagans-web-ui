@@ -2,6 +2,7 @@ import Modal from "../components/modal";
 import AppInput from "../components/app-input";
 import AppSelect from "../components/app-select";
 import AppTextEditor from "../components/app-text-editor";
+import QuillDisplay from "../components/quill-display";
 import Quill from "quill";
 import { useEffect, useRef, useState } from "react";
 import { Task, validTask } from "../utilities/types";
@@ -154,9 +155,7 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
                 <>
                     <h1 className="task-title">{updatedTask.id ? updatedTask.title : "Create New Task"}</h1>
                     <span>Details:</span>
-                    <div className="task-modal-details" dangerouslySetInnerHTML={{ __html: updatedTask.detailHtml }}>
-                        {/* <div className="ql-editor" dangerouslySetInnerHTML={{ __html: updatedTask.detailHtml }} /> */}
-                    </div>
+                    <QuillDisplay value={new Delta(ogDetailJson)} />
                     <span>Status:</span>
                     <span className="task-value">{TaskStatus[updatedTask.status]}</span>
                     <span>Priority:</span>

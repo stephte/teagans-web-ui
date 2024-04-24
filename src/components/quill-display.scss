@@ -1,25 +1,19 @@
 @import "../styles/variables";
 @import "../styles/mixins";
 
-.app-text-editor {
+.quill-display {
     border: none;
 
     .ql-container {
         border: none !important;
+        padding: 10px;
     }
-
+    
     .ql-toolbar {
-        border-top: none !important;
-        border-left: none !important;
-        border-right: none !important;
-        border-bottom: 1px solid grey !important;
+        display: none !important;
     }
-
-    .text-editor-label {
-        @include label;
-    }
-
-    .quill {
+    
+    .quill-container {
         width: 100%;
         margin-top: 5px;
         border-radius: 10px;
@@ -28,3 +22,4 @@
         color: black;
     }
 }
+
