@@ -16,11 +16,12 @@ interface TextEditorProps {
 
 const toolBarOptions = [
     // [{ 'font': [] }],
+    [{ 'size': [] }],
     ['bold', 'italic', 'underline', 'strike'],
     ['link', 'blockquote', 'code-block'],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],//, { 'list': 'check' }],
     // [{ 'script': 'sub'}, { 'script': 'super' }],
-    // [{ 'align': [] }, { 'indent': '-1'}, { 'indent': '+1' }],
+    [{ 'align': [] }, { 'indent': '-1'}, { 'indent': '+1' }],
     // [{ 'direction': 'rtl' }],
 ];
 

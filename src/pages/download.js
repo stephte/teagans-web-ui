@@ -41,7 +41,7 @@ const DownloadVid = () => {
 
 	return (
 		<FormBox errMsg={errMsg} isLoading={loading}>
-			<h2>Download YouTube Video:</h2>
+			<h2>Download YouTube Video</h2>
 			<AppInput
 				label="YouTube URL"
 				placeholder="youtube.com/watch?..."
