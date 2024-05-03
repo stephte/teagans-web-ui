@@ -39,6 +39,10 @@ export const updateTaskCategory = (taskCategory: TaskCategory) => {
     return api.patch(`task-categories/${taskCategory.id}`, taskCategory);
 };
 
+export const updateTaskCategories = (taskCategories: TaskCategory[]) => {
+    return api.post(`task-categories/update-categories`, { taskCategories });
+};
+
 export const deleteTaskCategory = (categoryId: string) => {
     return api.delete(`task-categories/${categoryId}`);
 };
