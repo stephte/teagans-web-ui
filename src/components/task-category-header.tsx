@@ -4,7 +4,7 @@ import AppInput from "../components/app-input";
 import AppSelect from "./app-select";
 import "./task-category-header.scss";
 import { useState } from "react";
-import { createTaskCategory, deleteTaskCategory, updateTaskCategory } from "../data/task";
+import { createTaskCategory, deleteTaskCategory, updateTaskCategories, updateTaskCategory } from "../data/task";
 import CategoryCard from "./category-card";
 import { getCardNode } from "../utilities/functions";
 
@@ -144,14 +144,11 @@ const TaskCategoryHeader = ({ taskCategories, selectedCategory, setCategory, ref
         setCategories(newList);
 
         // update all tasks that had their position changed
-        // TODO: create endpoint for updating multiple categories at once
-        catsToUpdate.forEach(cat => {
-            updateTaskCategory(cat)
-                .catch((err) => {
-                    setCreateErr(`Error updating category: ${err.response?.data?.error || err.message || ""}`);
-                    setCategories(ogList);
-                });
-        });
+        updateTaskCategories(catsToUpdate)
+            .catch((err) => {
+                setCreateErr(`Error updating categories: ${err.response?.data?.error || err.message || ""}`);
+                setCategories(ogList);
+            });
         setDragging(false);
     };
     const handleDragOver = (event: any) => {
