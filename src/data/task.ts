@@ -17,6 +17,10 @@ export const updateTask = (task: Task) => {
     return api.patch(`tasks/${task.id}`, task);
 };
 
+export const updateTasks = (tasks: Task[]) => {
+    return api.post(`tasks/update-tasks`, { tasks });
+};
+
 export const deleteTask = (taskId: string) => {
     return api.delete(`tasks/${taskId}`);
 };

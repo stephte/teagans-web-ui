@@ -3,7 +3,7 @@ import useAuthStore from "../stores/auth-store";
 import TaskCard from "../components/task-card";
 import TaskCategoryHeader from "../components/task-category-header";
 import { Task, TaskCategory } from "../utilities/types";
-import { getTasks, getTaskCategories, createTask, updateTask } from "../data/task";
+import { getTasks, getTaskCategories, createTask, updateTask, updateTasks } from "../data/task";
 import { TaskPriority, TaskStatus } from "../utilities/enums";
 import { getCardNode } from "../utilities/functions";
 import "./tasks.scss";
@@ -118,14 +118,11 @@ const Tasks = () => {
         setTasks([...tasks.filter(t => ![oldStatus, newStatus].includes(t.status)), ...updatedOldStatusList, ...updatedNewStatusList]);
 
         // update all tasks that had their position changed
-        // TODO: create endpoint for updating multiple tasks at once
-        tasksToUpdate.forEach(tsk => {
-            updateTask(tsk)
-                .catch((err) => {
-                    setTaskPageErr(`Error updating task: ${err.response?.data?.error || err.message || ""}`);
-                    setTasks(ogTaskList);
-                });
-        });
+        updateTasks(tasksToUpdate)
+            .catch((err) => {
+                setTaskPageErr(`Error updating tasks: ${err.response?.data?.error || err.message || ""}`);
+                setTasks(ogTaskList);
+            });
         setDragging(false);
     };
     // can update this to handle style changes to make updates more clear
