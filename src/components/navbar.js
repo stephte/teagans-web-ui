@@ -22,11 +22,11 @@ const NavBar = () => {
 	// authLevel of -1 means button shows only if user is not logged in
 	// authLevel omitted or of falsy value will display button for everyone
 	const btns = [
-		{
-			text: "Download",
-			link: "download",
-			authLevel: UserRole.Regular
-		},
+		// {
+		// 	text: "Download",
+		// 	link: "download",
+		// 	authLevel: UserRole.Regular
+		// },
 		{
 			text: "Users",
 			link: "users",
