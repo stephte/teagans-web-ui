@@ -18,7 +18,7 @@ export interface Task {
     status: TaskStatus;
     priority: TaskPriority;
     position: number;
-    effort: number;
+    dueDate: string;
     cleared: boolean;
 };
 

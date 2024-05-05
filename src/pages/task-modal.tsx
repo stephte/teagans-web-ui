@@ -74,6 +74,8 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
             value = TaskPriority[value];
         } else if (target.type === "number") {
             value = +value;
+        } else if (target.type == "date" && value === "") {
+            value = null;
         }
 
         let tsk = { ...updatedTask }
@@ -140,13 +142,12 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
                         required
                     />
                     <AppInput
-                        label="Effort"
-                        placeholder="Effort"
+                        label="Due Date"
+                        placeholder="Due Date"
                         onChange={handleChange}
-                        value={updatedTask.effort}
-                        name="effort"
-                        type="number"
-                        min="0"
+                        value={updatedTask.dueDate?.slice(0, 10)}
+                        name="dueDate"
+                        type="date"
                     />
                 </>
             );
@@ -160,8 +161,8 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
                     <span className="task-value">{TaskStatus[updatedTask.status]}</span>
                     <span>Priority:</span>
                     <span className="task-value">{TaskPriority[updatedTask.status]}</span>
-                    <span>Effort:</span>
-                    <span className="task-value">{updatedTask.effort}</span>
+                    <span>Due Date:</span>
+                    <span className="task-value">{updatedTask?.dueDate ? new Date(updatedTask.dueDate).toDateString().slice(4) : "N/A"}</span>
                 </>
             );
         }
