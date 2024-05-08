@@ -1,13 +1,14 @@
 import "./task-card.scss";
 import { TaskStatus, TaskPriority } from "../utilities/enums";
 import { Task } from "../utilities/types";
+import { prettyUTCDateStr } from "../utilities/functions";
 
 // Task {
 //     Title: string;
 //     Details: string;
 //     Status: TaskStatus;
 //     Priority: TaskPriority;
-//     Effort: string;
+//     DueDate: string;
 //     Cleared: boolean;
 // }
 const MAXCHARS = 105;
@@ -27,6 +28,8 @@ const TaskCard = ({ task, dragging, handleDragStart, handleDragEnd, onClick }: T
         details = details.slice(0, MAXCHARS - 3) + "...";
     }
 
+    const dueDate = task.dueDate ? prettyUTCDateStr(new Date(task.dueDate), true) : "N/A";
+
     return (
         <div
             id={task.id}
@@ -40,9 +43,9 @@ const TaskCard = ({ task, dragging, handleDragStart, handleDragEnd, onClick }: T
             <div className="task-card">
                 <div className="name">{task.title}</div>
                 <div className="details">{details}</div>
-                <div className="bottom">{TaskPriority[task.priority]}</div>
-                <div className="bottom">{TaskStatus[task.status]}</div>
-                <div className="bottom">{task.effort}</div>
+                <div className="bottom upcase">{TaskPriority[task.priority]}</div>
+                <div className="bottom upcase">{TaskStatus[task.status]}</div>
+                <div className="bottom">{dueDate}</div>
             </div>
         </div>
     );

@@ -7,6 +7,7 @@ import Quill from "quill";
 import { useEffect, useRef, useState } from "react";
 import { Task, validTask } from "../utilities/types";
 import { TaskPriority, TaskStatus } from "../utilities/enums";
+import { prettyUTCDateStr } from "../utilities/functions";
 import "./task-modal.scss";
 
 const Delta = Quill.import('delta');
@@ -74,6 +75,8 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
             value = TaskPriority[value];
         } else if (target.type === "number") {
             value = +value;
+        } else if (target.type == "date" && value === "") {
+            value = null;
         }
 
         let tsk = { ...updatedTask }
@@ -101,6 +104,8 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
 
     const getBody = () => {
         if (!updatedTask) return <></>;
+
+        let dueDate = updatedTask.dueDate?.slice(0, 10);
 
         if (isDeleting) {
             return (
@@ -140,28 +145,33 @@ const TaskModal = ({ isOpen, onClose, onSave, isLoading, errorMessage, task }: T
                         required
                     />
                     <AppInput
-                        label="Effort"
-                        placeholder="Effort"
+                        label="Due Date"
+                        placeholder="Due Date"
                         onChange={handleChange}
-                        value={updatedTask.effort}
-                        name="effort"
-                        type="number"
-                        min="0"
+                        value={dueDate}
+                        name="dueDate"
+                        type="date"
                     />
                 </>
             );
         } else {
+            let dueDateStr = 'N/A';
+            if (updatedTask.dueDate) {
+                const dd = new Date(updatedTask.dueDate);
+                dueDateStr = prettyUTCDateStr(dd);
+            }
+
             return (
                 <>
                     <h1 className="task-title">{updatedTask.id ? updatedTask.title : "Create New Task"}</h1>
                     <span>Details:</span>
                     <QuillDisplay value={new Delta(ogDetailJson)} />
                     <span>Status:</span>
-                    <span className="task-value">{TaskStatus[updatedTask.status]}</span>
+                    <span className="task-value upcase">{TaskStatus[updatedTask.status]}</span>
                     <span>Priority:</span>
-                    <span className="task-value">{TaskPriority[updatedTask.status]}</span>
-                    <span>Effort:</span>
-                    <span className="task-value">{updatedTask.effort}</span>
+                    <span className="task-value upcase">{TaskPriority[updatedTask.status]}</span>
+                    <span>Due Date:</span>
+                    <span className="task-value">{dueDateStr}</span>
                 </>
             );
         }

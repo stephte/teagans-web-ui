@@ -18,7 +18,7 @@ const defaultTask = {
     status: TaskStatus.Todo,
     priority: TaskPriority.Low,
     position: 0,
-    effort: 0,
+    dueDate: null,
     cleared: false
 };
 
