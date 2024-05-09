@@ -1,4 +1,19 @@
+@import "../styles/variables";
+
 home-page {
 	text-align: center;
-	display: grid;
+
+	.content {
+		width: 60%;
+		max-width: 1000px;
+		margin: auto;
+		font-size: 18px;
+
+		.links {
+			font-size: 15px;
+			a {
+				color: $darker-green;
+			}
+		}
+	}
 }
